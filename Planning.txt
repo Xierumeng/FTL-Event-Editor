@@ -1,0 +1,19 @@
+Version naming convention
+
+Alpha Versions
+0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation.
+0.1.x Addition of event data, text, rewards, ships, ship destruction/crew deaths, augmentations, etc.
+0.2.x Exporting program contents to XML format
+0.3.x Importing XML to program-readable format
+0.4.x Quality assurance, UI changes, improved error feedback, forum post
+
+Beta Versions
+0.5.x First finalized version of project for public consumption, bugfixes
+0.6.x More UI changes based on public feedback
+0.7.x ???
+0.8.x ???
+0.9.x ???
+
+Release Versions
+1.0.x Second finalized version of project for public consumption, bugfixes
+2.0.x Overhaul (if necessary)
