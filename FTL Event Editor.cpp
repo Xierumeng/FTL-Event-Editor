@@ -1,5 +1,5 @@
 /*
-// Name:    FTL Event Simulator
+// Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, text, and export events
 // Version: 0.0.1
 // FTL ver: 1.6
