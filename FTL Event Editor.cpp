@@ -1,8 +1,8 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, text, and export events
-// Version: 0.0.1
-// FTL ver: 1.6
+// Version: 0.0.2
+// FTL ver: 1.6?
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
 // Contact: xierumeng <at] hotmail (dot} com
@@ -23,7 +23,7 @@
 //
 //
 //Linked list construction successful, TODO: modification, deletion, and destruction
-//CURRENT: createText and findText are having problems
+//CURRENT: Test modify and find
 //TODO: Linked list AND Text is templated
 */
 
@@ -48,8 +48,8 @@ public:
     std::string getID(); //Returns the ID
     Text *getNext(); //Returns next text node
 
-    void replaceText(std::string replaceText); //Replaces contents of event text
-    void changeNext(Text *p_Next);
+    void replaceText(std::string newText); //Replaces contents of event text
+    void changeNext(Text *p_Next); //Updates pointer to next text
 
 private:
 
@@ -76,8 +76,8 @@ Text *Text::getNext(){
     return p_nextText;
 }
 
-void Text::replaceText(std::string replaceText){
-    contents = replaceText;
+void Text::replaceText(std::string newText){
+    contents = newText;
 }
 
 void Text::changeNext(Text *p_next){
@@ -96,6 +96,7 @@ public:
     void printText(Text *p_text); //Prints text
 
     int createText(std::string createID); //Creates a new node with corresponding id
+    void modifyContent(Text *p_currentNode, std::string newText); //Replaces the contents of the found ID TODO: Template
 
 private:
 
@@ -190,6 +191,10 @@ int Linked_List::createText(std::string createID){
     }
 }
 
+void Linked_List::modifyText(Text *p_currentNode, std::string newText){
+        p_currentNode->replaceText(newText);
+}
+
 /* TODO:
 class event{
 public:
@@ -206,23 +211,20 @@ private:
 
 };
 */
-
-
-
-
-
 int main(){
 
     Linked_List textList;
+    Text *p_current{nullptr};
     bool exit{0};
     std::string command{""};
-    std::string findID{""};
-    std::cout << "FTL Event Simulator v0.0.1" << std::endl;
+    //std::string findID{""};
+    
+    std::cout << "FTL Event Simulator v0.0.2" << std::endl;
 
     do{
 
         std::cout << std::endl << "Waiting for user command: ";
-        std::cin >> command;
+        std::cin >> command; //Valid commands: EXIT, PRINT, FIND, CREATE, EDIT
 
         if (command == "EXIT")
             exit = 1;
@@ -239,11 +241,16 @@ int main(){
 
                 std::cout << "Text ID to find: ";
                 std::cin >> command;
-                if (textList.findText(command) == nullptr)
+                p_current = textList.findText(command);
+                
+                if (p_current == nullptr)
                     std::cout << "Not found." << std::endl;
 
-                else
-                    textList.printText(textList.findText(command)); //Finds the text, then prints it
+                else{
+                    
+                    textList.printText(p_current); //Finds the text, then prints it
+                    p_current = nullptr;
+                }
 
             }else if (command == "CREATE"){
 
@@ -255,7 +262,24 @@ int main(){
 
                 else
                     textList.createText(command);
+                
+            }else if (command == "EDIT"){
+                
+                std::cout << "Text ID to modify: ";
+                std::cin >> command;
+                p_current = textList.findText(command);
+                
+                if (p_current == nullptr)
+                    std::cout << "Not found." << std::endl;
 
+                else{
+                    
+                    std::cout << "Contents of text ID replacement text: ";
+                    std::cin >> command;
+                    textList.modifyText(p_current, command);
+                    p_current = nullptr;
+                }
+                
             }else
                 std::cout << "Invalid command." << std::endl;
         }
