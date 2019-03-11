@@ -1,0 +1,8 @@
+Changelog
+
+v0.0.2
+Edit added and find modified, untested
+
+v0.0.1
+Created linked list of text nodes, allows user to create and print nodes
+Nodes are sorted in alphabetical order
