@@ -1,7 +1,7 @@
 /*
 // Name:    FTL Event Editor
-// Goal:    To allow users to import, modify, create, text, and export events
-// Version: 0.0.2
+// Goal:    To allow users to import, modify, create, test, and export events
+// Version: 0.0.3 //FROM PROGRAM_VERSION
 // FTL ver: 1.6?
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
@@ -15,16 +15,16 @@
 //
 //TODO: Things that will need to be modified later
 //FROM: Matches code from other sections
+//TEST: std::cout << "TEST#" << std::endl; for testing
 //
 //One line separations between categories. Exceptions: One liners, bracket-only lines
 //Classes: Constructor/destructor, read functions, write functions
 //
 //Program Notes
 //
-//
-//Linked list construction successful, TODO: modification, deletion, and destruction
-//CURRENT: Test modify and find
-//TODO: Linked list AND Text is templated
+//Linked list construction successful
+//CURRENT: Add node deletion, and destruction
+//TODO: Linked list AND Text is templated, event class
 */
 
 #include <iostream>
@@ -32,6 +32,7 @@
 #include <string.h>
 //#include <math.h>
 
+#define PROGRAM_VERSION "0.0.3" //FROM Version:
 #define MAX_NUM_CHOICES 12
 
 class Text;
@@ -96,7 +97,7 @@ public:
     void printText(Text *p_text); //Prints text
 
     int createText(std::string createID); //Creates a new node with corresponding id
-    void modifyContent(Text *p_currentNode, std::string newText); //Replaces the contents of the found ID TODO: Template
+    void modifyText(Text *p_currentNode, std::string newText); //Replaces the contents of the found ID TODO: Template
 
 private:
 
@@ -114,15 +115,11 @@ bool Linked_List::emptyList(){
 
 void Linked_List::printList(){
 
-    std::cout << "p_listHead -> ";
-
     for(Text *p_currentNode{p_listHead}; p_currentNode != nullptr; p_currentNode = p_currentNode->getNext()){
         //Start with list head then increment through until end of list
 
-        std::cout << "(" << p_currentNode->getID() << ") -> ";
+        std::cout << p_currentNode->getID() << std::endl;
     }
-
-    std::cout << "0" << std::endl;
 }
 
 Text *Linked_List::findText(std::string findID){
@@ -136,7 +133,7 @@ Text *Linked_List::findText(std::string findID){
 
             unMatch = findID.compare(p_currentNode->getID());
 
-            if (!unMatch) //Skips increment if it matches
+            if (unMatch) //Skips increment if it matches
                 p_currentNode = p_currentNode->getNext();
 
         }while(p_currentNode != nullptr && unMatch == 1);
@@ -218,20 +215,29 @@ int main(){
     bool exit{0};
     std::string command{""};
     //std::string findID{""};
-    
-    std::cout << "FTL Event Simulator v0.0.2" << std::endl;
+
+    std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
 
     do{
 
         std::cout << std::endl << "Waiting for user command: ";
-        std::cin >> command; //Valid commands: EXIT, PRINT, FIND, CREATE, EDIT
+        std::cin >> command;
 
         if (command == "EXIT")
             exit = 1;
 
         else{
 
-            if (command == "PRINT"){
+            if (command == "HELP"){
+
+                std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
+                std::cout << "EXIT - Exits the program." << std::endl;
+                std::cout << "PRINT - Prints the current list of nodes." << std::endl;
+                std::cout << "FIND - Searches for the node specificed and prints its contents." << std::endl;
+                std::cout << "CREATE - Creates a new node with the specificed name without duplicates." << std::endl;
+                std::cout << "EDIT - Replaces the contents of the node with the specified input.";
+                std::cout << "WARNING: You will not be able to cancel this operation." << std::endl;
+            }else if (command == "PRINT"){
 
                 std::cout << "Printing:" << std::endl;
                 textList.printList();
@@ -242,12 +248,12 @@ int main(){
                 std::cout << "Text ID to find: ";
                 std::cin >> command;
                 p_current = textList.findText(command);
-                
+
                 if (p_current == nullptr)
                     std::cout << "Not found." << std::endl;
 
                 else{
-                    
+
                     textList.printText(p_current); //Finds the text, then prints it
                     p_current = nullptr;
                 }
@@ -257,31 +263,34 @@ int main(){
                 std::cout << "New ID name: ";
                 std::cin >> command;
 
-                if (textList.createText(command))
+                if (textList.findText(command) != nullptr)
                     std::cout << "There is already an ID with this name." << std::endl;
 
-                else
+                else{
+
                     textList.createText(command);
-                
+                    std::cout << command << " created successfully." << std::endl;
+                }
+
             }else if (command == "EDIT"){
-                
+
                 std::cout << "Text ID to modify: ";
                 std::cin >> command;
                 p_current = textList.findText(command);
-                
+
                 if (p_current == nullptr)
                     std::cout << "Not found." << std::endl;
 
                 else{
-                    
+
                     std::cout << "Contents of text ID replacement text: ";
                     std::cin >> command;
                     textList.modifyText(p_current, command);
                     p_current = nullptr;
                 }
-                
+
             }else
-                std::cout << "Invalid command." << std::endl;
+                std::cout << "Invalid command, type HELP for help." << std::endl;
         }
 
     }while(!exit);
