@@ -89,7 +89,7 @@ class Linked_List{
 public:
 
     Linked_List(); //Constructor
-    //TODO: ~Linked_List(); //Destructor
+    ~Linked_List(); //Destructor
 
     bool emptyList(); //Checks if list is empty
     void printList(); //Prints the list ID's
@@ -98,6 +98,7 @@ public:
 
     int createText(std::string createID); //Creates a new node with corresponding id
     void modifyText(Text *p_currentNode, std::string newText); //Replaces the contents of the found ID TODO: Template
+    int deleteNode(std::string deleteID); //Deletes the node with corresponding id
 
 private:
 
@@ -107,6 +108,18 @@ private:
 Linked_List::Linked_List():
     p_listHead{nullptr}
 {
+}
+
+Linked_List::~Linked_List():
+{
+    p_nextNode{p_listHead};
+    
+    while(p_listHead != nullptr){
+        
+        p_nextNode = p_listHead->getNext();
+        delete p_listHead;
+        p_listHead = p_nextNode;
+    }
 }
 
 bool Linked_List::emptyList(){
@@ -129,7 +142,7 @@ Text *Linked_List::findText(std::string findID){
         Text *p_currentNode{p_listHead};
         int unMatch{1};
 
-        do{ //Start with list head then increment through matches or passes match point
+        do{ //Start with list head then increment through matches or passes match point FROM: createText, deleteNode
 
             unMatch = findID.compare(p_currentNode->getID());
 
@@ -164,7 +177,7 @@ int Linked_List::createText(std::string createID){
         Text *p_previousNode{nullptr};
         int unMatch{1};
 
-        do{ //Start with list head then increment through matches or passes match point FROM findText
+        do{ //Start with list head then increment through matches or passes match point FROM: findText
 
             unMatch = createID.compare(p_currentNode->getID());
 
@@ -192,6 +205,39 @@ void Linked_List::modifyText(Text *p_currentNode, std::string newText){
         p_currentNode->replaceText(newText);
 }
 
+int Lined_List::deleteNode(std::string deleteID){
+    
+    if (emptyList())
+        return 0;
+    
+    else{
+
+        Text *p_currentNode{p_listHead};
+        Text *p_previousNode{nullptr};
+        int unMatch{1};
+
+        do{ //Start with list head then increment through matches or passes match point FROM: findText
+
+            unMatch = createID.compare(p_currentNode->getID());
+
+            if (unMatch == 1){
+
+                p_previousNode = p_currentNode;
+                p_currentNode = p_currentNode->getNext();
+            }
+        }while(p_currentNode != nullptr && unMatch == 1);
+
+        if (!unMatch)
+            return 0;
+
+        if (p_previousNode != nullptr)
+            p_previousNode.changeNext(p_currentNode.getNext()); //Update previous node's next
+
+        delete p_currentNode;
+        return 1;
+    }
+}
+
 /* TODO:
 class event{
 public:
@@ -210,7 +256,7 @@ private:
 */
 int main(){
 
-    Linked_List textList;
+    Linked_List textList; //TODO: Make this a pointer?
     Text *p_current{nullptr};
     bool exit{0};
     std::string command{""};
@@ -235,8 +281,11 @@ int main(){
                 std::cout << "PRINT - Prints the current list of nodes." << std::endl;
                 std::cout << "FIND - Searches for the node specificed and prints its contents." << std::endl;
                 std::cout << "CREATE - Creates a new node with the specificed name without duplicates." << std::endl;
-                std::cout << "EDIT - Replaces the contents of the node with the specified input.";
-                std::cout << "WARNING: You will not be able to cancel this operation." << std::endl;
+                std::cout << "EDIT - Replaces the contents of the node with the specified input." << std::endl;
+                std::cout << "DELETE - Deletes the specified node." << std::endl;
+                //std::cout << "DESTROY - (Dangerous) Deletes an entire list." << std::endl;
+                std::cout << std::endl << "WARNING: You will not be able to cancel an operation once it has begun." << std::endl;
+                
             }else if (command == "PRINT"){
 
                 std::cout << "Printing:" << std::endl;
@@ -287,6 +336,20 @@ int main(){
                     std::cin >> command;
                     textList.modifyText(p_current, command);
                     p_current = nullptr;
+                }
+            
+            }else if (command == "DELETE"){
+                
+                std::cout << "Text ID to delete: ";
+                std::cin >> command;
+                
+                if (textList.findText(command) != nullptr)
+                    std::cout << "Not found." << std::endl;
+                
+                else{
+                    
+                    textList.deleteNode(command);
+                    std::cout << command << " successfully deleted." << std::endl;
                 }
 
             }else
