@@ -1,7 +1,7 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.0.3 //FROM PROGRAM_VERSION
+// Version: 0.0.4 //FROM PROGRAM_VERSION
 // FTL ver: 1.6?
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
@@ -32,7 +32,7 @@
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.0.3" //FROM Version:
+#define PROGRAM_VERSION "0.0.4" //FROM Version:
 #define MAX_NUM_CHOICES 12
 
 class Text;
