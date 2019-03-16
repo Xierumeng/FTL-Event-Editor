@@ -1,7 +1,14 @@
 Changelog
 
+v0.0.5
+Changed name of Text class to Node
+Node now templated
+Linked_List now templated
+Updated main to reflect template changes
+
 v0.0.4
 Delete and destructor created
+Commands added to main
 
 v0.0.3
 Edit and find now working
