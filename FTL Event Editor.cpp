@@ -23,8 +23,8 @@
 //Program Notes
 //
 //Linked list construction successful
-//CURRENT: Add node deletion, and destruction
-//TODO: Linked list AND Text is templated, event class
+//CURRENT: Linked list AND Text is templated
+//TODO: Event class and other FTL-specific lists
 */
 
 #include <iostream>
