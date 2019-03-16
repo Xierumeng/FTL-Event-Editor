@@ -1,8 +1,8 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.0.4 //FROM PROGRAM_VERSION
-// FTL ver: 1.6?
+// Version: 0.0.5 //FROM PROGRAM_VERSION
+// For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
 // Contact: xierumeng <at] hotmail (dot} com
@@ -22,7 +22,6 @@
 //
 //Program Notes
 //
-//Linked list construction successful
 //CURRENT: Linked list AND Text is templated
 //TODO: Event class and other FTL-specific lists
 */
@@ -32,63 +31,77 @@
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.0.4" //FROM Version:
+#define PROGRAM_VERSION "0.0.5" //FROM Version
 #define MAX_NUM_CHOICES 12
 
-class Text;
+template <typename T>
+class Node;
+template <typename T>
 class Linked_List;
 int main();
 
-class Text{
+template <typename T>
+class Node{
 public:
 
-    Text(std::string ID, Text *p_next = nullptr);
-    ~Text();
+    Node(std::string ID, Node<T> *p_next = nullptr);
+    ~Node();
 
-    std::string getText(); //Returns the text
+    T getValue(); //Returns the stored value
     std::string getID(); //Returns the ID
-    Text *getNext(); //Returns next text node
+    Node<T> *getNext(); //Returns next node
 
-    void replaceText(std::string newText); //Replaces contents of event text
-    void changeNext(Text *p_Next); //Updates pointer to next text
+    void replaceValue(T newValue); //Replaces contents
+    void replaceNext(Node<T> *p_Next); //Updates pointer to next node
 
 private:
 
-    std::string id; //Name of the text
-    std::string contents; //Contents of the text
-	Text *p_nextText; //Points to next text in alphabetical order
+    std::string id; //Name of the node
+    T contents; //Contents of the node
+	Node<T> *p_nextNode; //Points to next node in alphabetical order
+
+template <typename S>
+friend class Linked_List; //TODO: Do we really want Linked_List to be able to touch Node's privates?
 };
 
-Text::Text(std::string ID, Text *p_next){
+template <typename T>
+Node<T>::Node(std::string ID, Node<T> *p_next){
 
     id = ID;
-    p_nextText = p_next;
+    p_nextNode = p_next;
 }
 
-Text::~Text()
+template <typename T>
+Node<T>::~Node()
 {
 }
 
-std::string Text::getText(){
+template <typename T>
+T Node<T>::getValue(){
     return contents;
 }
 
-std::string Text::getID(){
+template <typename T>
+std::string Node<T>::getID(){
     return id;
 }
 
-Text *Text::getNext(){
-    return p_nextText;
+template <typename T>
+Node<T> *Node<T>::getNext(){
+    return p_nextNode;
 }
 
-void Text::replaceText(std::string newText){
-    contents = newText;
+template <typename T>
+void Node<T>::replaceValue(T newValue){
+    contents = newValue;
 }
 
-void Text::changeNext(Text *p_next){
-    p_nextText = p_next;
+template <typename T>
+void Node<T>::replaceNext(Node<T> *p_next){
+    p_nextNode = p_next;
 }
 
+template <typename T>
 class Linked_List{
 public:
 
@@ -97,26 +110,28 @@ public:
 
     bool emptyList(); //Checks if list is empty
     void printList(); //Prints the list ID's
-    Text *findText(std::string findID); //Finds the node matching ID TODO: Change type, test
-    void printText(Text *p_text); //Prints text
+    Node<T> *findNode(std::string findID); //Finds the node matching ID
+    void printNode(Node<T> *p_next); //Prints value of a node
 
-    int createText(std::string createID); //Creates a new node with corresponding id
-    void modifyText(Text *p_currentNode, std::string newText); //Replaces the contents of the found ID TODO: Template
+    int createNode(std::string createID); //Creates a new node with corresponding id
+    void modifyNode(Node<T> *p_currentNode, T newValue); //Replaces the contents of the found ID
     int deleteNode(std::string deleteID); //Deletes the node with corresponding id
 
 private:
 
-    Text *p_listHead; //Head of list //TODO: Change type
+    Node<T> *p_listHead; //Head of list
 };
 
-Linked_List::Linked_List():
+template <typename T>
+Linked_List<T>::Linked_List():
     p_listHead{nullptr}
 {
 }
 
-Linked_List::~Linked_List()
+template <typename T>
+Linked_List<T>::~Linked_List()
 {
-    Text *p_nextNode{p_listHead};
+    Node<T> *p_nextNode{p_listHead};
 
     while(p_listHead != nullptr){
 
@@ -126,27 +141,30 @@ Linked_List::~Linked_List()
     }
 }
 
-bool Linked_List::emptyList(){
+template <typename T>
+bool Linked_List<T>::emptyList(){
     return (p_listHead == nullptr);
 }
 
-void Linked_List::printList(){
+template <typename T>
+void Linked_List<T>::printList(){
 
-    for(Text *p_currentNode{p_listHead}; p_currentNode != nullptr; p_currentNode = p_currentNode->getNext()){
+    for(Node<T> *p_currentNode{p_listHead}; p_currentNode != nullptr; p_currentNode = p_currentNode->getNext()){
         //Start with list head then increment through until end of list
 
         std::cout << p_currentNode->getID() << std::endl;
     }
 }
 
-Text *Linked_List::findText(std::string findID){
+template <typename T>
+Node<T> *Linked_List<T>::findNode(std::string findID){
 
     if (!emptyList()){
 
-        Text *p_currentNode{p_listHead};
+        Node<T> *p_currentNode{p_listHead};
         int unMatch{1};
 
-        do{ //Start with list head then increment through matches or passes match point FROM: createText, deleteNode
+        do{ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
 
             unMatch = findID.compare(p_currentNode->getID());
 
@@ -162,26 +180,28 @@ Text *Linked_List::findText(std::string findID){
     return nullptr;
 }
 
-void Linked_List::printText(Text *p_text){
+template <typename T>
+void Linked_List<T>::printNode(Node<T> *p_next){
 
-    std::cout << p_text->getID() << std::endl;
-    std::cout << p_text->getText() << std::endl;
+    std::cout << p_next->getID() << std::endl;
+    std::cout << p_next->getValue() << std::endl;
 }
 
-int Linked_List::createText(std::string createID){
+template <typename T>
+int Linked_List<T>::createNode(std::string createID){
 
     if (emptyList()){
 
-        p_listHead = new Text(createID, nullptr);
+        p_listHead = new Node<T>(createID, nullptr);
         return 1;
     }
     else{
 
-        Text *p_currentNode{p_listHead};
-        Text *p_previousNode{nullptr};
+        Node<T> *p_currentNode{p_listHead};
+        Node<T> *p_previousNode{nullptr};
         int unMatch{1};
 
-        do{ //Start with list head then increment through matches or passes match point FROM: findText
+        do{ //Start with list head then increment through matches or passes match point FROM: findNode
 
             unMatch = createID.compare(p_currentNode->getID());
 
@@ -196,28 +216,30 @@ int Linked_List::createText(std::string createID){
             return 0;
 
         if (p_previousNode == nullptr)
-            p_listHead = new Text(createID, p_currentNode);
+            p_listHead = new Node<T>(createID, p_currentNode);
 
         else
-            p_previousNode->changeNext(new Text(createID, p_currentNode));
+            p_previousNode->replaceNext(new Node<T>(createID, p_currentNode));
 
         return 1;
     }
 }
 
-void Linked_List::modifyText(Text *p_currentNode, std::string newText){
-        p_currentNode->replaceText(newText);
+template <typename T>
+void Linked_List<T>::modifyNode(Node<T> *p_currentNode, T newValue){
+        p_currentNode->replaceValue(newValue);
 }
 
-int Linked_List::deleteNode(std::string deleteID){
+template <typename T>
+int Linked_List<T>::deleteNode(std::string deleteID){
 
     if (emptyList())
         return 0;
 
     else{
 
-        Text *p_currentNode{p_listHead};
-        Text *p_previousNode{nullptr};
+        Node<T> *p_currentNode{p_listHead};
+        Node<T> *p_previousNode{nullptr};
         int unMatch{1};
 
         do{ //Start with list head then increment through matches or passes match point FROM: findText
@@ -234,7 +256,7 @@ int Linked_List::deleteNode(std::string deleteID){
         if (!unMatch){
 
             if (p_previousNode != nullptr)
-                p_previousNode->changeNext(p_currentNode->getNext()); //Update previous node's next
+                p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
 
             delete p_currentNode;
             return 1;
@@ -258,8 +280,8 @@ private:
 */
 int main(){
 
-    Linked_List textList; //TODO: Make this a pointer?
-    Text *p_current{nullptr};
+    Linked_List<std::string> textList; //TODO: Make this a pointer?
+    Node<std::string> *p_current{nullptr}; //TODO: Get rid of p_current somehow
     bool exit{0};
     std::string command{""};
     //std::string findID{""};
@@ -290,22 +312,22 @@ int main(){
 
             }else if (command == "PRINT"){
 
-                std::cout << "Printing:" << std::endl;
+                std::cout << "Printing:" << std::endl << std::endl;
                 textList.printList();
-                std::cout << std::endl;
 
-            }else if (command == "FIND"){ //TODO: Get rid of p_current somehow
+            }else if (command == "FIND"){
 
                 std::cout << "Text ID to find: ";
                 std::cin >> command;
-                p_current = textList.findText(command);
+                p_current = textList.findNode(command);
 
                 if (p_current == nullptr)
                     std::cout << "Not found." << std::endl;
 
                 else{
 
-                    textList.printText(p_current); //Finds the text, then prints it
+                    std::cout << std::endl;
+                    textList.printNode(p_current); //Finds the node, then prints its ID and contents
                     p_current = nullptr;
                 }
 
@@ -314,12 +336,12 @@ int main(){
                 std::cout << "New ID name: ";
                 std::cin >> command;
 
-                if (textList.findText(command) != nullptr)
-                    std::cout << "There is already an ID with this name." << std::endl;
+                if (textList.findNode(command) != nullptr)
+                    std::cout << "An ID with this name already exists." << std::endl;
 
                 else{
 
-                    textList.createText(command);
+                    textList.createNode(command);
                     std::cout << command << " created successfully." << std::endl;
                 }
 
@@ -327,7 +349,7 @@ int main(){
 
                 std::cout << "Text ID to modify: ";
                 std::cin >> command;
-                p_current = textList.findText(command);
+                p_current = textList.findNode(command);
 
                 if (p_current == nullptr)
                     std::cout << "Not found." << std::endl;
@@ -336,7 +358,7 @@ int main(){
 
                     std::cout << "Contents of text ID replacement text: ";
                     std::cin >> command;
-                    textList.modifyText(p_current, command);
+                    textList.modifyNode(p_current, command);
                     p_current = nullptr;
                 }
 
@@ -345,12 +367,12 @@ int main(){
                 std::cout << "Text ID to delete: ";
                 std::cin >> command;
 
-                if (textList.findText(command) == nullptr)
+                if (textList.findNode(command) == nullptr)
                     std::cout << "Not found." << std::endl;
 
                 else{
 
-                    if (textList.deleteNode(command));
+                    if (textList.deleteNode(command))
                         std::cout << command << " successfully deleted." << std::endl;
 
                     else
