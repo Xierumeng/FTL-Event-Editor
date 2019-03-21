@@ -40,6 +40,26 @@ template <typename T>
 class Linked_List;
 int main();
 
+//TODO
+
+typedef struct Choice{
+
+    std::string choiceText;
+    std::string choiceID;
+};
+
+class Event: public Node{
+public:
+
+    Event(std::string ID);
+    ~Event();
+
+private:
+
+    std::string shipID;
+    choice choices[10];
+}; //TODO
+
 template <typename T>
 class Node{
 public:
