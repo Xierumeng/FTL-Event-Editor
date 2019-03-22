@@ -10,7 +10,6 @@
 // Notes:   For FTL Faster-than-Light. Use at your own risk; no liability is held to the author of this program.
 */
 
-/*
 //Program Conventions
 //
 //TODO: Things that will need to be modified later
@@ -22,9 +21,8 @@
 //
 //Program Notes
 //
-//CURRENT: Linked_List supporting Node lists, starting findNode->create and deleteNode functions
+//CURRENT: Node now supports tree
 //TODO: Event class and other FTL-specific lists
-*/
 
 #include <iostream>
 #include <stdlib.h>
@@ -41,7 +39,7 @@ class Linked_List;
 int main();
 
 //TODO
-
+/*
 typedef struct Choice{
 
     std::string choiceText;
@@ -58,7 +56,20 @@ private:
 
     std::string shipID;
     choice choices[10];
-}; //TODO
+}; //TODO */
+
+/* TODO:
+class event{
+public:
+    printEvent(text eventText, event* choices); //Print out all of the event and choice text
+    makeChoice(event* choices); //Proceeds to the next event
+private:
+    text eventChoice; //ID of the event choice text
+    text eventTextID; //ID of the event text
+    //event choices[MAX_NUM_CHOICES]; //Array of possible choice ID's for this event
+    event* p_next; //Points to next event in alphabetical order
+};
+*/
 
 template <typename T>
 class Node{
@@ -139,7 +150,7 @@ void Node<T>::replaceNext(Node<T> *p_next){
 }
 
 template <typename T>
-void Node<T>::replaceNext(Node<T> *p_head){
+void Node<T>::replaceHead(Node<T> *p_head){
     p_headList = p_head;
 }
 
@@ -153,9 +164,10 @@ public:
     bool emptyList(); //Checks if list is empty
     void printList(); //Prints all list ID's (by all, we mean ALL)
     Node<T> *findNode(std::string findID); //Finds the node matching ID
+	Node<T> *findLinearNode(std::string findID) //Find the node in a single list
     void printNode(Node<T> *p_next); //Prints value of a node, and subnode ID's
 
-    int createNode(std::string createID); //Creates a new node with corresponding id
+    int createNode(std::string createID, std::string parentID); //Creates a new node with corresponding id
     void modifyNode(Node<T> *p_currentNode, T newValue); //Replaces the contents of the found ID
     int deleteNode(std::string deleteID); //Deletes the node with corresponding id
 
@@ -214,9 +226,8 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
 
         Node<T> *p_currentNode{p_listHead};
         Node<T> *p_subNode{p_currentNode->getHead};
-        //int unMatch{1};
 
-        while(p_currentNode != nullptr){
+        while(p_currentNode != nullptr){ //FROM: deleteNode
             
             if (!findID.compare(p_currentNode->getID())) //If ID matches
                     return p_currentNode;
@@ -232,21 +243,26 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
             p_currentNode = p_currentNode->getNext();
             p_subNode = p_currentNode->getHead();
         }
-    
-        /* do{ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
-
-            unMatch = findID.compare(p_currentNode->getID());
-
-            if (unMatch) //Skips increment if it matches
-                p_currentNode = p_currentNode->getNext();
-
-        }while(p_currentNode != nullptr && unMatch == 1);
-
-        if (!unMatch)
-            return p_currentNode; */
     }
 
     return nullptr;
+}
+
+Node<T> *Linked_List<T>::findLinearNode(std::string findID){
+
+    Node<T> *p_currentNode{p_listHead};
+    int unMatch{1};
+
+    while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
+
+        unMatch = findID.compare(p_currentNode->getID());
+
+        if (unMatch) //Skips increment if it matches
+                p_currentNode = p_currentNode->getNext();
+    }
+
+    if (!unMatch)
+        return p_currentNode;
 }
 
 template <typename T>
@@ -267,20 +283,46 @@ void Linked_List<T>::printNode(Node<T> *p_next){
 }
 
 template <typename T>
-int Linked_List<T>::createNode(std::string createID){
+int Linked_List<T>::createNode(std::string createID, std::string parentID){
+	//List is empty - Just create new node.
+	//Otherwise, check for duplicate from create - return 0 if it does.
+	//Can't find parent - return -1.
+	//Inserted successfully - return 1.
 
     if (emptyList()){
 
         p_listHead = new Node<T>(createID, nullptr);
         return 1;
-    }
+		
+	}else if (findNode(createID) != nullptr)
+		return 0;
+		
     else{
 
         Node<T> *p_currentNode{p_listHead};
-        Node<T> *p_previousNode{nullptr};
+		Node<T> *p_previousNode{nullptr};
         int unMatch{1};
 
-        do{ //Start with list head then increment through matches or passes match point FROM: findNode
+		if (parentID != ""){ //If the parentID exists, find the parentID node
+			
+			while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through until matches FROM: findLinearNode, slightly lower down
+
+				unMatch = parentID.compare(p_currentNode->getID());
+
+				if (unMatch == 1)
+					p_currentNode = p_currentNode->getNext();
+			}
+			
+			if (unMatch)
+				return -1; //Could not find parentID
+			
+			p_previousNode = p_currentNode
+			p_currentNode = p_currentNode->getHead();
+		}
+		
+		unMatch = 1;
+
+        while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through until matches or passes FROM: findLinearNode, slightly higher up
 
             unMatch = createID.compare(p_currentNode->getID());
 
@@ -289,17 +331,19 @@ int Linked_List<T>::createNode(std::string createID){
                 p_previousNode = p_currentNode;
                 p_currentNode = p_currentNode->getNext();
             }
-        }while(p_currentNode != nullptr && unMatch == 1);
+        }
 
-        if (!unMatch)
-            return 0;
-
-        if (p_previousNode == nullptr)
-            p_listHead = new Node<T>(createID, p_currentNode);
-
-        else
-            p_previousNode->replaceNext(new Node<T>(createID, p_currentNode));
-
+        if (p_previousNode != nullptr){
+			
+			if (parentID.compare(p_previousNode->getID())) //If the previous node is the parentID
+				p_previousNode->replaceHead(new Node<T>(createID, p_currentNode));
+				
+			else
+				p_previousNode->replaceNext(new Node<T>(createID, p_currentNode));
+			
+		}else
+			p_listHead = new Node<T>(createID, p_currentNode);
+			
         return 1;
     }
 }
@@ -318,24 +362,55 @@ int Linked_List<T>::deleteNode(std::string deleteID){
     else{
 
         Node<T> *p_currentNode{p_listHead};
+		Node<T> *p_subNode{p_currentNode->getHead()};
         Node<T> *p_previousNode{nullptr};
         int unMatch{1};
+		bool subList{0};
 
-        do{ //Start with list head then increment through matches or passes match point FROM: findText
+        while(p_currentNode != nullptr && unMatch){ //FROM: findNode
+            
+			subList = 0;
+			unMatch = deleteID.compare(p_currentNode->getID());
+            
+			if (unMatch){ //If the ID does not match
+			
+				p_subNode = p_currentNode->getHead();
+				p_previousNode = p_currentNode;
+				unMatch = 1;
+				subList = 1;
+			
+				while(p_subNode != nullptr && unMatch == 1){ //Start with list head then increment through matches or passes match point FROM: findLinearNode, createNode
 
-            unMatch = deleteID.compare(p_currentNode->getID());
+					unMatch = deleteID.compare(p_subNode->getID());
 
-            if (unMatch == 1){
+					if (unMatch){ //Skips increment if it matches
+						p_previousNode = p_subNode;
+						p_subNode = p_subNode->getNext();
+						
+					}
+				}
+			}
+			
+			if (unMatch){
+				p_previousNode = p_currentNode;
+				p_currentNode = p_currentNode->getNext();
+				
+			}
+		}
 
-                p_previousNode = p_currentNode;
-                p_currentNode = p_currentNode->getNext();
-            }
-        }while(p_currentNode != nullptr && unMatch == 1);
-
-        if (!unMatch){
-
-            if (p_previousNode != nullptr)
-                p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
+        if (!unMatch){ //TODO: Add shit
+			
+            if (p_previousNode != nullptr){
+				
+				if (subList)
+					p_currentNode = p_subNode;
+				
+				if (p_previousNode->getHead == nullptr)				
+					p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
+				
+				else
+					p_previousNode->replaceHead(p_currentNode->getNext()); //Update previous node's head
+			}
 
             delete p_currentNode;
             return 1;
@@ -345,18 +420,6 @@ int Linked_List<T>::deleteNode(std::string deleteID){
     }
 }
 
-/* TODO:
-class event{
-public:
-    printEvent(text eventText, event* choices); //Print out all of the event and choice text
-    makeChoice(event* choices); //Proceeds to the next event
-private:
-    text eventChoice; //ID of the event choice text
-    text eventTextID; //ID of the event text
-    //event choices[MAX_NUM_CHOICES]; //Array of possible choice ID's for this event
-    event* p_next; //Points to next event in alphabetical order
-};
-*/
 int main(){
 
     Linked_List<std::string> textList; //TODO: Make this a pointer?
@@ -385,7 +448,7 @@ int main(){
                 std::cout << "FIND - Searches for the node specificed and prints its contents." << std::endl;
                 std::cout << "CREATE - Creates a new node with the specificed name without duplicates." << std::endl;
                 std::cout << "EDIT - Replaces the contents of the node with the specified input." << std::endl;
-                std::cout << "DELETE - Deletes the specified node." << std::endl;
+                std::cout << "DELETE - Deletes the specified node and its sub-nodes." << std::endl;
                 //std::cout << "DESTROY - (Dangerous) Deletes an entire list." << std::endl;
                 std::cout << std::endl << "WARNING: You will not be able to cancel an operation once it has begun." << std::endl;
 
