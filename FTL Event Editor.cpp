@@ -13,8 +13,9 @@
 //Program Conventions
 //
 //TODO: Things that will need to be modified later
+//!!!!: Urgency
 //FROM: Matches code from other sections
-//TEST: std::cout << "TEST#" << std::endl; for testing
+//TEST: For testing
 //
 //One line separations between categories. Exceptions: One liners, bracket-only lines
 //Classes: Constructor/destructor, read functions, write functions
@@ -99,11 +100,11 @@ friend class Linked_List; //TODO: Do we really want Linked_List to be able to to
 };
 
 template <typename T>
-Node<T>::Node(std::string ID, Node<T> *p_next, Node<T> *p_head){
-
-    id{ID};
-    p_nextNode{p_next};
-    p_listHead{p_head};
+Node<T>::Node(std::string ID, Node<T> *p_next, Node<T> *p_head):
+id{ID} //TODO !!!!
+p_nextNode{p_next}
+p_listHead{p_head}
+{
 }
 
 template <typename T>
@@ -209,9 +210,9 @@ void Linked_List<T>::printList(){
         std::cout << p_currentNode->getID() << std::endl;
       if (p_currentNode->getHead() != nullptr) //FROM: printNode
            std::cout << "Sublist: ";
-        
+
         for(Node<T> *p_subNode{p_currentNode->getHead(); p_subNode != nullptr; p_subNode = p_subNode->getNext()){
-            
+
             std::cout << p_subNode->getID() << " ";
             if (p_subNode == nullptr)
                 std::cout << std::endl;
@@ -228,18 +229,18 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
         Node<T> *p_subNode{p_currentNode->getHead};
 
         while(p_currentNode != nullptr){ //FROM: deleteNode
-            
+
             if (!findID.compare(p_currentNode->getID())) //If ID matches
                     return p_currentNode;
-            
+
             while(p_subNode != nullptr){ //Skips second bit if p_subNode is nullptr
-                
+
                 if (!findID.compare(p_subNode->getID()))
                     return p_subNode;
-                
+
                 p_subNode = p_subNode->getNext();
             }
-            
+
             p_currentNode = p_currentNode->getNext();
             p_subNode = p_currentNode->getHead();
         }
@@ -270,12 +271,12 @@ void Linked_List<T>::printNode(Node<T> *p_next){
 
     std::cout << p_next->getID() << std::endl;
     std::cout << p_next->getValue() << std::endl;
-    
+
     if (p_currentNode->getHead() != nullptr) //FROM: printList
             std::cout << "Sublist: ";
-        
+
     for(Node<T> *p_subNode{p_currentNode->getHead(); p_subNode != nullptr; p_subNode = p_subNode->getNext()){
-            
+
         std::cout << p_subNode->getID() << " ";
         if (p_subNode == nullptr)
             std::cout << std::endl;
@@ -285,18 +286,18 @@ void Linked_List<T>::printNode(Node<T> *p_next){
 template <typename T>
 int Linked_List<T>::createNode(std::string createID, std::string parentID){
 	//List is empty - Just create new node.
-	//Otherwise, check for duplicate from create - return 0 if it does.
-	//Can't find parent - return -1.
+	//Otherwise, check for duplicate from createID - return 0 if it does.
+	//Can't find parentID - return -1.
 	//Inserted successfully - return 1.
 
     if (emptyList()){
 
         p_listHead = new Node<T>(createID, nullptr);
         return 1;
-		
+
 	}else if (findNode(createID) != nullptr)
 		return 0;
-		
+
     else{
 
         Node<T> *p_currentNode{p_listHead};
@@ -304,25 +305,27 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
         int unMatch{1};
 
 		if (parentID != ""){ //If the parentID exists, find the parentID node
-			
-			while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through until matches FROM: findLinearNode, slightly lower down
+
+			while(p_currentNode != nullptr && unMatch == 1){
+                //Start with list head then increment through until matches FROM: findLinearNode, slightly lower down
 
 				unMatch = parentID.compare(p_currentNode->getID());
 
 				if (unMatch == 1)
 					p_currentNode = p_currentNode->getNext();
 			}
-			
+
 			if (unMatch)
 				return -1; //Could not find parentID
-			
+
 			p_previousNode = p_currentNode
 			p_currentNode = p_currentNode->getHead();
 		}
-		
+
 		unMatch = 1;
 
-        while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through until matches or passes FROM: findLinearNode, slightly higher up
+        while(p_currentNode != nullptr && unMatch == 1){
+            //Start with list head then increment through until matches or passes FROM: findLinearNode, slightly higher up
 
             unMatch = createID.compare(p_currentNode->getID());
 
@@ -334,16 +337,16 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
         }
 
         if (p_previousNode != nullptr){
-			
+
 			if (parentID.compare(p_previousNode->getID())) //If the previous node is the parentID
 				p_previousNode->replaceHead(new Node<T>(createID, p_currentNode));
-				
+
 			else
 				p_previousNode->replaceNext(new Node<T>(createID, p_currentNode));
-			
+
 		}else
 			p_listHead = new Node<T>(createID, p_currentNode);
-			
+
         return 1;
     }
 }
@@ -368,46 +371,47 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 		bool subList{0};
 
         while(p_currentNode != nullptr && unMatch){ //FROM: findNode
-            
+
 			subList = 0;
 			unMatch = deleteID.compare(p_currentNode->getID());
-            
+
 			if (unMatch){ //If the ID does not match
-			
+
 				p_subNode = p_currentNode->getHead();
 				p_previousNode = p_currentNode;
 				unMatch = 1;
 				subList = 1;
-			
-				while(p_subNode != nullptr && unMatch == 1){ //Start with list head then increment through matches or passes match point FROM: findLinearNode, createNode
+
+				while(p_subNode != nullptr && unMatch == 1){
+                    //Start with list head then increment through matches or passes match point FROM: findLinearNode, createNode
 
 					unMatch = deleteID.compare(p_subNode->getID());
 
 					if (unMatch){ //Skips increment if it matches
 						p_previousNode = p_subNode;
 						p_subNode = p_subNode->getNext();
-						
+
 					}
 				}
 			}
-			
+
 			if (unMatch){
 				p_previousNode = p_currentNode;
 				p_currentNode = p_currentNode->getNext();
-				
+
 			}
 		}
 
         if (!unMatch){ //TODO: Add shit
-			
+
             if (p_previousNode != nullptr){
-				
+
 				if (subList)
 					p_currentNode = p_subNode;
-				
-				if (p_previousNode->getHead == nullptr)				
+
+				if (p_previousNode->getHead == nullptr)
 					p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
-				
+
 				else
 					p_previousNode->replaceHead(p_currentNode->getNext()); //Update previous node's head
 			}
@@ -426,11 +430,15 @@ int main(){
     Node<std::string> *p_current{nullptr}; //TODO: Get rid of p_current somehow
     bool exit{0};
     std::string command{""};
+    std::string parent{""};
     //std::string findID{""};
 
     std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
 
     do{
+
+        command = "";
+        parent = "";
 
         std::cout << std::endl << "Waiting for user command: ";
         std::cin >> command;
@@ -483,8 +491,22 @@ int main(){
 
                 else{
 
-                    textList.createNode(command);
-                    std::cout << command << " created successfully." << std::endl;
+                    std::cout << "Under parent? y/Y for yes, otherwise no: ";
+                    std::cin >> parent;
+
+                    if (parent == "y" || parent == "Y"){
+
+                        std::cout << "Name of parent node: ";
+                        std::cin >> parent;
+
+                    }else
+                        parent = "";
+
+                    if (textList.createNode(command, parent) == 1)
+                        std::cout << command << " created successfully." << std::endl;
+
+                    else
+                        std::cout << "ERROR: Invalid return on createNode." << std::endl;
                 }
 
             }else if (command == "EDIT"){
@@ -518,7 +540,7 @@ int main(){
                         std::cout << command << " successfully deleted." << std::endl;
 
                     else
-                        std::cout << "ERROR: deleteNode function in scope Linked_List." << std::endl;
+                        std::cout << "ERROR: Invalid return on deleteNode." << std::endl;
                 }
 
             }else
