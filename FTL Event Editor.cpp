@@ -502,15 +502,29 @@ int main(){
 
                         std::cout << "Name of parent node: ";
                         std::cin >> parent;
+						if (textList.findNode(parent) != nullptr){
+							
+							std::cout << "GOOD" << std::endl;
+							if (textList.createNode(command, parent) == 1)
+								std::cout << command << " created successfully." << std::endl;
+							
+							else
+								std::cout << "ERROR: Invalid return on createNode." << std::endl;
+							
+						}else
+							std::cout << "Parent node not found." << std::endl;
 
-                    }else
-                        parent = "";
+                    }else{
+                        
+						parent = "";
 
-                    if (textList.createNode(command, parent) == 1)
-                        std::cout << command << " created successfully." << std::endl;
+						std::cout << "BAD" << std::endl;
+						if (textList.createNode(command, parent) == 1)
+							std::cout << command << " created successfully." << std::endl;
 
-                    else
-                        std::cout << "ERROR: Invalid return on createNode." << std::endl;
+						else
+							std::cout << "ERROR: Invalid return on createNode." << std::endl;
+					}
                 }
 
             }else if (command == "EDIT"){
