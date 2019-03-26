@@ -1,5 +1,9 @@
 Changelog
 
+v0.0.6
+Created tree from Node to support lists
+Modified Linked_List to support Node
+
 v0.0.5
 Changed name of Text class to Node
 Node now templated
