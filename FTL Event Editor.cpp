@@ -14,16 +14,19 @@
 //
 //TODO: Things that will need to be modified later
 //!!!!: Urgency
-//FROM: Matches code from other sections
+//FROM: Matches code(-ish) from other sections
 //TEST: For testing
+//
+//id  : Internal identification
+//ID  : External identification
 //
 //One line separations between categories. Exceptions: One liners, bracket-only lines
 //Classes: Constructor/destructor, read functions, write functions
 //
 //Program Notes
 //
-//CURRENT: Node now supports tree
-//TODO: Event class and other FTL-specific lists
+//CURRENT: Subclass crap (Event class, Choice class) headers, Node's privates
+//TODO: Add Ship class, other FTL-specific lists
 
 #include <iostream>
 #include <stdlib.h>
@@ -33,42 +36,42 @@
 #define PROGRAM_VERSION "0.0.6" //FROM Version
 #define MAX_NUM_CHOICES 12
 
+//class Choice;
+//class Event;
 template <typename T>
 class Node;
 template <typename T>
 class Linked_List;
 int main();
 
-//TODO
-/*
-typedef struct Choice{
-
-    std::string choiceText;
-    std::string choiceID;
-};
-
-class Event: public Node{
+//0.1.0
+/*class Choice: public Event{ //TODO: Fix the subclass header definition
 public:
 
-    Event(std::string ID);
+	Choice(); //TODO: FIX
+	~Choice();
+
+	bool hidden; //Tags TODO: Privatize
+	bool blue;
+	std::string req;
+	unsigned short int lvl;
+	unsigned short int maxLvl;
+	unsigned short int maxGroup;
+	
+    std::string eventID;
+};
+
+class Event: public Node{ //T value is the unique tag of boolean
+public:
+
+    Event(std::string ID); //TODO: FIX
     ~Event();
 
 private:
 
-    std::string shipID;
-    choice choices[10];
-}; //TODO */
-
-/* TODO:
-class event{
-public:
-    printEvent(text eventText, event* choices); //Print out all of the event and choice text
-    makeChoice(event* choices); //Proceeds to the next event
-private:
-    text eventChoice; //ID of the event choice text
-    text eventTextID; //ID of the event text
-    //event choices[MAX_NUM_CHOICES]; //Array of possible choice ID's for this event
-    event* p_next; //Points to next event in alphabetical order
+	std::string textID;
+    //std::string shipID;
+    std::string choiceID[MAX_NUM_CHOICES]; 
 };
 */
 
@@ -101,8 +104,8 @@ friend class Linked_List; //TODO: Do we really want Linked_List to be able to to
 
 template <typename T>
 Node<T>::Node(std::string ID, Node<T> *p_next, Node<T> *p_head):
-id{ID} //TODO !!!!
-p_nextNode{p_next}
+id{ID}, //TODO !!!!
+p_nextNode{p_next},
 p_listHead{p_head}
 {
 }
@@ -152,7 +155,7 @@ void Node<T>::replaceNext(Node<T> *p_next){
 
 template <typename T>
 void Node<T>::replaceHead(Node<T> *p_head){
-    p_headList = p_head;
+    p_listHead = p_head;
 }
 
 template <typename T>
@@ -165,7 +168,7 @@ public:
     bool emptyList(); //Checks if list is empty
     void printList(); //Prints all list ID's (by all, we mean ALL)
     Node<T> *findNode(std::string findID); //Finds the node matching ID
-	Node<T> *findLinearNode(std::string findID) //Find the node in a single list
+	Node<T> *findLinearNode(std::string findID); //Find the node in a single list
     void printNode(Node<T> *p_next); //Prints value of a node, and subnode ID's
 
     int createNode(std::string createID, std::string parentID); //Creates a new node with corresponding id
@@ -211,7 +214,7 @@ void Linked_List<T>::printList(){
       if (p_currentNode->getHead() != nullptr) //FROM: printNode
            std::cout << "Sublist: ";
 
-        for(Node<T> *p_subNode{p_currentNode->getHead(); p_subNode != nullptr; p_subNode = p_subNode->getNext()){
+        for(Node<T> *p_subNode{p_currentNode->getHead()}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
 
             std::cout << p_subNode->getID() << " ";
             if (p_subNode == nullptr)
@@ -226,7 +229,7 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
     if (!emptyList()){
 
         Node<T> *p_currentNode{p_listHead};
-        Node<T> *p_subNode{p_currentNode->getHead};
+        Node<T> *p_subNode{p_currentNode->getHead()};
 
         while(p_currentNode != nullptr){ //FROM: deleteNode
 
@@ -249,6 +252,7 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
     return nullptr;
 }
 
+template <typename T>
 Node<T> *Linked_List<T>::findLinearNode(std::string findID){
 
     Node<T> *p_currentNode{p_listHead};
@@ -267,15 +271,15 @@ Node<T> *Linked_List<T>::findLinearNode(std::string findID){
 }
 
 template <typename T>
-void Linked_List<T>::printNode(Node<T> *p_next){
+void Linked_List<T>::printNode(Node<T> *p_current){
 
-    std::cout << p_next->getID() << std::endl;
-    std::cout << p_next->getValue() << std::endl;
+    std::cout << p_current->getID() << std::endl;
+    std::cout << p_current->getValue() << std::endl;
 
-    if (p_currentNode->getHead() != nullptr) //FROM: printList
+    if (p_current->getHead() != nullptr) //FROM: printList
             std::cout << "Sublist: ";
 
-    for(Node<T> *p_subNode{p_currentNode->getHead(); p_subNode != nullptr; p_subNode = p_subNode->getNext()){
+    for(Node<T> *p_subNode{p_current->getHead()}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
 
         std::cout << p_subNode->getID() << " ";
         if (p_subNode == nullptr)
@@ -318,7 +322,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 			if (unMatch)
 				return -1; //Could not find parentID
 
-			p_previousNode = p_currentNode
+			p_previousNode = p_currentNode;
 			p_currentNode = p_currentNode->getHead();
 		}
 
@@ -409,7 +413,7 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 				if (subList)
 					p_currentNode = p_subNode;
 
-				if (p_previousNode->getHead == nullptr)
+				if (p_previousNode->getHead() == nullptr)
 					p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
 
 				else
@@ -427,7 +431,7 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 int main(){
 
     Linked_List<std::string> textList; //TODO: Make this a pointer?
-    Node<std::string> *p_current{nullptr}; //TODO: Get rid of p_current somehow
+    Node<std::string> *p_current{nullptr}; //Keep for load functions
     bool exit{0};
     std::string command{""};
     std::string parent{""};
