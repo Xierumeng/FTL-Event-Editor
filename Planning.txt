@@ -1,7 +1,10 @@
-Version naming convention and plan v2
+Version naming convention and plan v3
+
+Patch versions are commits on a branch (a.b.x)
+In the form of a.b.x.y
 
 Alpha Versions
-0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation.
+0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
 0.1.x Addition of FTL data (events, text, rewards, ships, equipment etc.) and simulation environment
 0.2.x Exporting program contents to XML format
 0.3.x Importing XML to program-readable format
