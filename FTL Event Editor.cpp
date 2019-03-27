@@ -232,6 +232,8 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
         Node<T> *p_subNode{p_currentNode->getHead()};
 
         while(p_currentNode != nullptr){ //FROM: deleteNode
+		
+			p_subNode = p_currentNode->getHead();
 
             if (!findID.compare(p_currentNode->getID())) //If ID matches
                     return p_currentNode;
@@ -245,7 +247,6 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
             }
 
             p_currentNode = p_currentNode->getNext();
-            p_subNode = p_currentNode->getHead();
         }
     }
 
@@ -258,7 +259,7 @@ Node<T> *Linked_List<T>::findLinearNode(std::string findID){
     Node<T> *p_currentNode{p_listHead};
     int unMatch{1};
 
-    while(p_currentNode != nullptr && unMatch == 1){ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
+    while(p_currentNode != nullptr && unMatch > 0){ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
 
         unMatch = findID.compare(p_currentNode->getID());
 
@@ -293,6 +294,9 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 	//Otherwise, check for duplicate from createID - return 0 if it does.
 	//Can't find parentID - return -1.
 	//Inserted successfully - return 1.
+	
+	std::cout << "TEST " << createID << "-" << parentID << "-" << std::endl;
+	std::cout << "TEST Function called" << std::endl;
 
     if (emptyList()){
 
@@ -303,19 +307,25 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 		return 0;
 
     else{
+		
+		std::cout << "TEST Not empty list, no duplicate found" << std::endl;
 
         Node<T> *p_currentNode{p_listHead};
 		Node<T> *p_previousNode{nullptr};
         int unMatch{1};
 
 		if (parentID != ""){ //If the parentID exists, find the parentID node
+		
+			std::cout << "TEST " << parentID << " found" << std::endl;
 
-			while(p_currentNode != nullptr && unMatch == 1){
+			while(p_currentNode != nullptr && unMatch > 0){
                 //Start with list head then increment through until matches FROM: findLinearNode, slightly lower down
 
 				unMatch = parentID.compare(p_currentNode->getID());
+				std::cout << parentID << ".compare(" << p_currentNode->getID() << ") returns";
+				std::cout << "TEST" << unMatch << std::endl;
 
-				if (unMatch == 1)
+				if (unMatch > 0)
 					p_currentNode = p_currentNode->getNext();
 			}
 
@@ -325,24 +335,29 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 			p_previousNode = p_currentNode;
 			p_currentNode = p_currentNode->getHead();
 		}
+		
+		std::cout << "TEST Inserting..." << std::endl;
 
 		unMatch = 1;
 
-        while(p_currentNode != nullptr && unMatch == 1){
+        while(p_currentNode != nullptr && unMatch > 0){
             //Start with list head then increment through until matches or passes FROM: findLinearNode, slightly higher up
 
             unMatch = createID.compare(p_currentNode->getID());
+			std::cout << "TEST" << unMatch << std::endl;
 
-            if (unMatch == 1){
+            if (unMatch > 0){
 
                 p_previousNode = p_currentNode;
                 p_currentNode = p_currentNode->getNext();
             }
         }
+		
+		std::cout << "TEST Loop done" << std::endl;
 
         if (p_previousNode != nullptr){
 
-			if (parentID.compare(p_previousNode->getID())) //If the previous node is the parentID
+			if (!parentID.compare(p_previousNode->getID())) //If the previous node is the parentID
 				p_previousNode->replaceHead(new Node<T>(createID, p_currentNode));
 
 			else
@@ -350,6 +365,8 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 
 		}else
 			p_listHead = new Node<T>(createID, p_currentNode);
+		
+		std::cout << "TEST Insert done" << std::endl;
 
         return 1;
     }
@@ -386,7 +403,7 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 				unMatch = 1;
 				subList = 1;
 
-				while(p_subNode != nullptr && unMatch == 1){
+				while(p_subNode != nullptr && unMatch > 0){
                     //Start with list head then increment through matches or passes match point FROM: findLinearNode, createNode
 
 					unMatch = deleteID.compare(p_subNode->getID());
@@ -438,6 +455,7 @@ int main(){
     //std::string findID{""};
 
     std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
+	std::cout << "TEST " << ("HELLO" == "") << "-" << std::endl;
 
     do{
 
@@ -489,6 +507,8 @@ int main(){
 
                 std::cout << "New ID name: ";
                 std::cin >> command;
+				
+				std::cout << "TEST " << command << std::endl;
 
                 if (textList.findNode(command) != nullptr)
                     std::cout << "An ID with this name already exists." << std::endl;
