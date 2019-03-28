@@ -57,7 +57,7 @@ public:
 	unsigned short int lvl;
 	unsigned short int maxLvl;
 	unsigned short int maxGroup;
-	
+
     std::string eventID;
 };
 
@@ -71,7 +71,7 @@ private:
 
 	std::string textID;
     //std::string shipID;
-    std::string choiceID[MAX_NUM_CHOICES]; 
+    std::string choiceID[MAX_NUM_CHOICES];
 };
 */
 
@@ -211,14 +211,14 @@ void Linked_List<T>::printList(){
         //Start with list head then increment through until end of list
 
         std::cout << p_currentNode->getID() << std::endl;
-      if (p_currentNode->getHead() != nullptr) //FROM: printNode
-           std::cout << "Sublist: ";
+        //if (p_currentNode->getHead() != nullptr) //FROM: printNode
+        //   std::cout << "    Sublist: ";
 
         for(Node<T> *p_subNode{p_currentNode->getHead()}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
 
-            std::cout << p_subNode->getID() << " ";
-            if (p_subNode == nullptr)
-                std::cout << std::endl;
+            std::cout << " - " << p_subNode->getID() << std::endl;
+            //if (p_subNode == nullptr)
+            //    std::cout << std::endl;
         }
     }
 }
@@ -232,7 +232,7 @@ Node<T> *Linked_List<T>::findNode(std::string findID){
         Node<T> *p_subNode{p_currentNode->getHead()};
 
         while(p_currentNode != nullptr){ //FROM: deleteNode
-		
+
 			p_subNode = p_currentNode->getHead();
 
             if (!findID.compare(p_currentNode->getID())) //If ID matches
@@ -277,14 +277,14 @@ void Linked_List<T>::printNode(Node<T> *p_current){
     std::cout << p_current->getID() << std::endl;
     std::cout << p_current->getValue() << std::endl;
 
-    if (p_current->getHead() != nullptr) //FROM: printList
-            std::cout << "Sublist: ";
+    //if (p_current->getHead() != nullptr) //FROM: printList
+    //        std::cout << "Sublist: ";
 
     for(Node<T> *p_subNode{p_current->getHead()}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
 
-        std::cout << p_subNode->getID() << " ";
-        if (p_subNode == nullptr)
-            std::cout << std::endl;
+        std::cout << " - " <<p_subNode->getID() << std::endl;
+        //if (p_subNode == nullptr)
+        //    std::cout << std::endl;
     }
 }
 
@@ -294,7 +294,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 	//Otherwise, check for duplicate from createID - return 0 if it does.
 	//Can't find parentID - return -1.
 	//Inserted successfully - return 1.
-	
+
 	std::cout << "TEST " << createID << "-" << parentID << "-" << std::endl;
 	std::cout << "TEST Function called" << std::endl;
 
@@ -307,7 +307,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 		return 0;
 
     else{
-		
+
 		std::cout << "TEST Not empty list, no duplicate found" << std::endl;
 
         Node<T> *p_currentNode{p_listHead};
@@ -315,7 +315,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
         int unMatch{1};
 
 		if (parentID != ""){ //If the parentID exists, find the parentID node
-		
+
 			std::cout << "TEST " << parentID << " found" << std::endl;
 
 			while(p_currentNode != nullptr && unMatch > 0){
@@ -335,7 +335,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 			p_previousNode = p_currentNode;
 			p_currentNode = p_currentNode->getHead();
 		}
-		
+
 		std::cout << "TEST Inserting..." << std::endl;
 
 		unMatch = 1;
@@ -352,7 +352,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
                 p_currentNode = p_currentNode->getNext();
             }
         }
-		
+
 		std::cout << "TEST Loop done" << std::endl;
 
         if (p_previousNode != nullptr){
@@ -365,7 +365,7 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 
 		}else
 			p_listHead = new Node<T>(createID, p_currentNode);
-		
+
 		std::cout << "TEST Insert done" << std::endl;
 
         return 1;
@@ -507,7 +507,7 @@ int main(){
 
                 std::cout << "New ID name: ";
                 std::cin >> command;
-				
+
 				std::cout << "TEST " << command << std::endl;
 
                 if (textList.findNode(command) != nullptr)
@@ -515,36 +515,27 @@ int main(){
 
                 else{
 
-                    std::cout << "Under parent? y/Y for yes, otherwise no: ";
-                    std::cin >> parent;
+                    if (!textList.emptyList()){
 
-                    if (parent == "y" || parent == "Y"){
-
-                        std::cout << "Name of parent node: ";
+                        std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
                         std::cin >> parent;
-						if (textList.findNode(parent) != nullptr){
-							
-							std::cout << "GOOD" << std::endl;
-							if (textList.createNode(command, parent) == 1)
-								std::cout << command << " created successfully." << std::endl;
-							
-							else
-								std::cout << "ERROR: Invalid return on createNode." << std::endl;
-							
-						}else
-							std::cout << "Parent node not found." << std::endl;
+                    }
 
-                    }else{
-                        
-						parent = "";
+                    if (textList.findNode(parent) == nullptr)
+                        parent = "";
 
-						std::cout << "BAD" << std::endl;
-						if (textList.createNode(command, parent) == 1)
-							std::cout << command << " created successfully." << std::endl;
+                    std::cout << "TEST GOOD" << std::endl;
+                    if (textList.createNode(command, parent) == 1){
 
-						else
-							std::cout << "ERROR: Invalid return on createNode." << std::endl;
-					}
+                        std::cout << command << " created successfully";
+
+                        if (parent != "")
+                            std::cout << " under " << parent;
+
+                        std::cout << "." << std::endl;
+
+                    }else
+                        std::cout << "ERROR: Invalid return " << textList.createNode(command, parent) << " on createNode." << std::endl;
                 }
 
             }else if (command == "EDIT"){
@@ -562,6 +553,7 @@ int main(){
                     std::cin >> command;
                     textList.modifyNode(p_current, command);
                     p_current = nullptr;
+                    std::cout << command << " replaced successfully." << std::endl;
                 }
 
             }else if (command == "DELETE"){
@@ -586,6 +578,8 @@ int main(){
         }
 
     }while(!exit);
+
+    std::cout << "Ending program..." << std::endl;
 
     //TEST
     //command = "BBBB";
