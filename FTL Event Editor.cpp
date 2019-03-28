@@ -104,7 +104,7 @@ friend class Linked_List; //TODO: Do we really want Linked_List to be able to to
 
 template <typename T>
 Node<T>::Node(std::string ID, Node<T> *p_next, Node<T> *p_head):
-id{ID}, //TODO !!!!
+id{ID},
 p_nextNode{p_next},
 p_listHead{p_head}
 {
@@ -295,9 +295,6 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 	//Can't find parentID - return -1.
 	//Inserted successfully - return 1.
 
-	std::cout << "TEST " << createID << "-" << parentID << "-" << std::endl;
-	std::cout << "TEST Function called" << std::endl;
-
     if (emptyList()){
 
         p_listHead = new Node<T>(createID, nullptr);
@@ -308,22 +305,16 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 
     else{
 
-		std::cout << "TEST Not empty list, no duplicate found" << std::endl;
-
         Node<T> *p_currentNode{p_listHead};
 		Node<T> *p_previousNode{nullptr};
         int unMatch{1};
 
 		if (parentID != ""){ //If the parentID exists, find the parentID node
 
-			std::cout << "TEST " << parentID << " found" << std::endl;
-
 			while(p_currentNode != nullptr && unMatch > 0){
                 //Start with list head then increment through until matches FROM: findLinearNode, slightly lower down
 
 				unMatch = parentID.compare(p_currentNode->getID());
-				std::cout << parentID << ".compare(" << p_currentNode->getID() << ") returns";
-				std::cout << "TEST" << unMatch << std::endl;
 
 				if (unMatch > 0)
 					p_currentNode = p_currentNode->getNext();
@@ -336,15 +327,12 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 			p_currentNode = p_currentNode->getHead();
 		}
 
-		std::cout << "TEST Inserting..." << std::endl;
-
 		unMatch = 1;
 
         while(p_currentNode != nullptr && unMatch > 0){
             //Start with list head then increment through until matches or passes FROM: findLinearNode, slightly higher up
 
             unMatch = createID.compare(p_currentNode->getID());
-			std::cout << "TEST" << unMatch << std::endl;
 
             if (unMatch > 0){
 
@@ -352,8 +340,6 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
                 p_currentNode = p_currentNode->getNext();
             }
         }
-
-		std::cout << "TEST Loop done" << std::endl;
 
         if (p_previousNode != nullptr){
 
@@ -365,8 +351,6 @@ int Linked_List<T>::createNode(std::string createID, std::string parentID){
 
 		}else
 			p_listHead = new Node<T>(createID, p_currentNode);
-
-		std::cout << "TEST Insert done" << std::endl;
 
         return 1;
     }
@@ -423,19 +407,21 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 			}
 		}
 
-        if (!unMatch){ //TODO: Add shit
+        if (!unMatch){
 
             if (p_previousNode != nullptr){
 
 				if (subList)
 					p_currentNode = p_subNode;
 
-				if (p_previousNode->getHead() == nullptr)
+				if (p_previousNode->getHead() != p_currentNode)
 					p_previousNode->replaceNext(p_currentNode->getNext()); //Update previous node's next
 
 				else
 					p_previousNode->replaceHead(p_currentNode->getNext()); //Update previous node's head
-			}
+			
+			}else
+				p_listHead = nullptr;
 
             delete p_currentNode;
             return 1;
@@ -455,7 +441,6 @@ int main(){
     //std::string findID{""};
 
     std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
-	std::cout << "TEST " << ("HELLO" == "") << "-" << std::endl;
 
     do{
 
@@ -508,8 +493,6 @@ int main(){
                 std::cout << "New ID name: ";
                 std::cin >> command;
 
-				std::cout << "TEST " << command << std::endl;
-
                 if (textList.findNode(command) != nullptr)
                     std::cout << "An ID with this name already exists." << std::endl;
 
@@ -523,8 +506,7 @@ int main(){
 
                     if (textList.findNode(parent) == nullptr)
                         parent = "";
-
-                    std::cout << "TEST GOOD" << std::endl;
+					
                     if (textList.createNode(command, parent) == 1){
 
                         std::cout << command << " created successfully";
