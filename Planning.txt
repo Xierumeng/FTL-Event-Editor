@@ -1,7 +1,13 @@
-Version naming convention and plan v2
+Version naming convention and plan v4
+
+Versioning is in the form of a.b.x.y where:
+a is major version, most likely due to refactoring.
+b is minor version, adding/changing functionality.
+x is patch version, working but missing features.
+y is night version, code is progressing and buggy.
 
 Alpha Versions
-0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation.
+0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
 0.1.x Addition of FTL data (events, text, rewards, ships, equipment etc.) and simulation environment
 0.2.x Exporting program contents to XML format
 0.3.x Importing XML to program-readable format

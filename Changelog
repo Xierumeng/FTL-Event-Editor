@@ -1,5 +1,10 @@
 Changelog
 
+v0.0.6
+Created tree from Node to support lists
+Killing a parent no longer orphans its children since they are also killed
+Modified Linked_List to support Node trees
+
 v0.0.5
 Changed name of Text class to Node
 Node now templated
