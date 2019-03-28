@@ -1,7 +1,10 @@
-Version naming convention and plan v3
+Version naming convention and plan v4
 
-Patch versions are commits on a branch (a.b.x)
-In the form of a.b.x.y
+Versioning is in the form of a.b.x.y where:
+a is major version, most likely due to refactoring.
+b is minor version, adding/changing functionality.
+x is patch version, working but missing features.
+y is night version, code is progressing and buggy.
 
 Alpha Versions
 0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
