@@ -1,7 +1,7 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.0.6 //FROM PROGRAM_VERSION
+// Version: 0.1.0 //FROM PROGRAM_VERSION
 // For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
@@ -33,7 +33,7 @@
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.0.6" //FROM Version
+#define PROGRAM_VERSION "0.1.0" //FROM Version
 #define MAX_NUM_CHOICES 12
 
 //class Choice;
@@ -44,21 +44,65 @@ template <typename T>
 class Linked_List;
 int main();
 
-//0.1.0
-/*class Choice: public Event{ //TODO: Fix the subclass header definition
+class Auto_Reward{
+public:
+
+	std::string level;
+	std::string rewardType;
+	
+}
+
+class Item_Modify{ //TODO: Implement steal
+public:
+	
+	int scrap[2];
+	int fuel[2];
+	int missiles[2];
+	int drones[2];
+}
+
+class Environment{
+public:
+	
+	std::string type;
+	std::string target;
+}
+
+class Damage{
+public:
+
+	int amount;
+	std::string system;
+	std::string effect;
+}
+
+class Status{
+public:
+	
+	std::string type;
+	std::string target;
+	std::string system;
+	int amount;
+}
+
+class Choice: public Node{ //T value is string choice text TODO: Fix the subclass header definition
 public:
 
 	Choice(); //TODO: FIX
 	~Choice();
+	
+private:
 
-	bool hidden; //Tags TODO: Privatize
+	//Tags
+	bool hidden; //Result hidden
 	bool blue;
 	std::string req;
-	unsigned short int lvl;
-	unsigned short int maxLvl;
-	unsigned short int maxGroup;
-
-    std::string eventID;
+	unsigned int lvl;
+	unsigned int maxLvl;
+	unsigned int maxGroup;
+	
+	int eventType; //-1 for direct event, 0 for id=, 1 for load=
+    Event eventID;
 };
 
 class Event: public Node{ //T value is the unique tag of boolean
@@ -69,11 +113,45 @@ public:
 
 private:
 
+	//Event text
+	int textType; //-1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
+	
+	//Beacon appearance TODO: add ship
+	bool distressBeacon;
+	bool repair;
+	bool store;
+	
+	//Single-line things
+	int modifyPursuit;
+	Environment environment;
+	bool revealMap;
+	bool secretSector;
+	std::string unlockShip;
+	std::string fleet;
+	
+	//Resources
+	Auto_Reward reward;
+	Item_Modify items;
+	std::string augment;
+	std::string drone;
+	std::string weapon;
+	std::string remove;
+	
+	//System
+	Damage damage;
+	Status status;
+	
+	
+	
+	std::string questEventID;
+	
     //std::string shipID;
-    std::string choiceID[MAX_NUM_CHOICES];
+    Choice choices[MAX_NUM_CHOICES];
+	
+	bool returnEvent; //Ending the event early with <event/>
 };
-*/
+
 
 template <typename T>
 class Node{
