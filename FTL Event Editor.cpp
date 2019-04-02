@@ -38,7 +38,7 @@
 //#include <math.h>
 
 #define PROGRAM_VERSION "0.1.0" //FROM Version
-#define MAX_NUM_CHOICES 12 //Events
+#define MAX_NUM_CHOICES 8 //Events
 #define MAX_CREW_PROP 4 //Crew types
 
 class Choice;
@@ -57,7 +57,7 @@ public:
 	std::string level;
 	std::string rewardType;
 	
-}
+};
 
 class Item_Modify{ //TODO: Implement steal
 public:
@@ -66,7 +66,7 @@ public:
 	int fuel[2];
 	int missiles[2];
 	int drones[2];
-}
+};
 
 class Damage{
 public:
@@ -74,7 +74,7 @@ public:
 	int amount;
 	std::string system;
 	std::string effect;
-}
+};
 
 class Status{
 public:
@@ -83,7 +83,7 @@ public:
 	std::string target;
 	std::string system;
 	unsigned int amount;
-}
+};
 
 class Boarder{
 public:
@@ -92,7 +92,7 @@ public:
 	unsigned int min;
 	unsigned int max; //Must be below 9
 	bool breach;
-}
+};
 
 class Crew_Member{
 public:
@@ -104,32 +104,16 @@ public:
 	std::string id; //Force name
 	
 	double proportion; //For Ship class crew proportion
-}
+};
 	
 class Surrender_Escape{
 public:
 	
 	double chance;
-	int timer
+	int timer;
 	int min;
 	int max;
-}
-
-class Ship{
-public:
-	
-	std::string id;
-	bool autoB; //auto_blueprint?
-	std::string blueprint;
-	
-	Event destroyed;
-	Event deadCrew;
-	Event surrender;
-	Event escape;
-	Event gotaway;
-	
-	Crew_Member crew[MAX_CREW_PROP];
-}
+};
 
 class Choice{
 public:
@@ -146,11 +130,14 @@ public:
 	
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
 	std::string eventID;
-    Event subEvent;
+    Event *p_subEvent;
 };
 
 class Event{
 public:
+
+	Event();
+	~Event();
 
 	bool unique;
 
@@ -159,7 +146,7 @@ public:
 	std::string textID;
 	
 	//Beacon appearance only
-	bool distressBeacon;
+	bool distress;
 	bool repair;
 	bool store;
 	std::string environment;
@@ -194,10 +181,46 @@ public:
 	
 	std::string questEventID;
 	
-    //std::string shipID;
     Choice choices[MAX_NUM_CHOICES];
 	
 	bool returnEvent; //Ending the event early with <event/>
+};
+
+Event::Event()
+/*unique{0},
+textType{-1},
+textID{""},
+distress{0},
+repair{0},
+store{0},
+environment{""},
+target{""},
+modifyPursuit{0},
+revealMap{0},
+secretSector{0},
+unlockShip{""},
+fleet{""},
+level.reward{""},
+level.*/
+{
+}
+
+class Ship{
+public:
+	
+	std::string id;
+	bool autoB; //auto_blueprint?
+	std::string blueprint;
+	
+	//Surrender_Escape ; TODO
+	
+	Event destroyed;
+	Event deadCrew;
+	Event surrender;
+	Event escape;
+	Event gotaway;
+	
+	Crew_Member crew[MAX_CREW_PROP];
 };
 
 template <typename T>
