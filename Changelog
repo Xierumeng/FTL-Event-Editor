@@ -1,5 +1,9 @@
 Changelog
 
+v0.1.0
+Added code to support FTL-specific data
+No code to actually access it though
+
 v0.0.6
 Created tree from Node to support lists
 Killing a parent no longer orphans its children since they are also killed
