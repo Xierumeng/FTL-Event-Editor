@@ -8,8 +8,8 @@ This is a work-in-progress. I hope to have version 0.5.0 done before 2019 Septem
 ### Planned
 
 * Import: The user can take an entire event xml and transfer the data into the program.
-* Create, modify, delete: The user can edit the data inside, or even create new events.
-* Test, simulate: The user can load in events and proceed just like in FTL. Note that more interaction is required (e.g. if a list is loaded the user must specify what item to load).
+* Create, modify, delete: The user can edit the data in the program, or even create new events.
+* Test, simulate: The user can load in events and proceed just like in FTL. Note that more interaction is required (e.g. if a list is loaded the user must specify which item to load next).
 * Export: The user can transfer the program's internal data into an xml that's ready for FTL. This will be the most difficult part to debug.
 * Interface: Something that is not just entering commands into a console. Maybe even click-and-drag.
 
