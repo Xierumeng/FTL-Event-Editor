@@ -10,23 +10,27 @@
 // Notes:   For FTL Faster-than-Light. Use at your own risk; no liability is held to the author of this program.
 */
 
-//Program Conventions
+/*
+// Program Conventions
 //
-//TODO: Things that will need to be modified later
-//!!!!: Urgency
-//FROM: Matches code(-ish) from other sections
-//TEST: For testing
+// TODO: Things that will need to be modified later
+// !!!!: Urgency
+// FROM: Matches code(-ish) from other sections
+// TEST: For testing
 //
-//id  : Internal identification
-//ID  : External identification
+// id  : Internal identification
+// ID  : External identification
 //
-//One line separations between categories. Exceptions: One liners, bracket-only lines
-//Classes: Constructor/destructor, read functions, write functions
+// One line separations between categories. Exceptions: One liners, bracket-only lines
+// Classes: Constructor/destructor, read functions, write functions
+*/
+
+/*
+// Program Notes
 //
-//Program Notes
-//
-//CURRENT: Subclass crap (Event class, Choice class) headers, Node's privates
-//TODO: Add Ship class, other FTL-specific lists
+// CURRENT: Add subclasses to Node to handle anything with "name" (event, eventList, [equipment], text, textList, crewMember id, ship, basically anything with an ID).
+// TODO   : Handle "[...]List" since they won't have names.
+*/
 
 #include <iostream>
 #include <stdlib.h>
@@ -34,16 +38,19 @@
 //#include <math.h>
 
 #define PROGRAM_VERSION "0.1.0" //FROM Version
-#define MAX_NUM_CHOICES 12
+#define MAX_NUM_CHOICES 12 //Events
+#define MAX_CREW_PROP 4 //Crew types
 
-//class Choice;
-//class Event;
+class Choice;
+class Event;
+
 template <typename T>
 class Node;
 template <typename T>
 class Linked_List;
 int main();
 
+//Data containers
 class Auto_Reward{
 public:
 
@@ -55,17 +62,10 @@ public:
 class Item_Modify{ //TODO: Implement steal
 public:
 	
-	int scrap[2];
+	int scrap[2]; //min, max
 	int fuel[2];
 	int missiles[2];
 	int drones[2];
-}
-
-class Environment{
-public:
-	
-	std::string type;
-	std::string target;
 }
 
 class Damage{
@@ -82,16 +82,59 @@ public:
 	std::string type;
 	std::string target;
 	std::string system;
-	int amount;
+	unsigned int amount;
 }
 
-class Choice: public Node{ //T value is string choice text TODO: Fix the subclass header definition
+class Boarder{
+public:
+	
+	std::string classRace;
+	unsigned int min;
+	unsigned int max; //Must be below 9
+	bool breach;
+}
+
+class Crew_Member{
+public:
+	
+	int amount;
+	std::string skill; //all_skills, pilot, etc.
+	unsigned int level; //1 or 2
+	std::string classRace;
+	std::string id; //Force name
+	
+	double proportion; //For Ship class crew proportion
+}
+	
+class Surrender_Escape{
+public:
+	
+	double chance;
+	int timer
+	int min;
+	int max;
+}
+
+class Ship{
+public:
+	
+	std::string id;
+	bool autoB; //auto_blueprint?
+	std::string blueprint;
+	
+	Event destroyed;
+	Event deadCrew;
+	Event surrender;
+	Event escape;
+	Event gotaway;
+	
+	Crew_Member crew[MAX_CREW_PROP];
+}
+
+class Choice{
 public:
 
-	Choice(); //TODO: FIX
-	~Choice();
-	
-private:
+	std::string choice;
 
 	//Tags
 	bool hidden; //Result hidden
@@ -102,33 +145,32 @@ private:
 	unsigned int maxGroup;
 	
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
-    Event eventID;
+	std::string eventID;
+    Event subEvent;
 };
 
-class Event: public Node{ //T value is the unique tag of boolean
+class Event{
 public:
 
-    Event(std::string ID); //TODO: FIX
-    ~Event();
-
-private:
+	bool unique;
 
 	//Event text
 	int textType; //-1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
 	
-	//Beacon appearance TODO: add ship
+	//Beacon appearance only
 	bool distressBeacon;
 	bool repair;
 	bool store;
+	std::string environment;
+	std::string target;
 	
 	//Single-line things
 	int modifyPursuit;
-	Environment environment;
 	bool revealMap;
 	bool secretSector;
 	std::string unlockShip;
-	std::string fleet;
+	std::string fleet; //Background ships
 	
 	//Resources
 	Auto_Reward reward;
@@ -142,7 +184,13 @@ private:
 	Damage damage;
 	Status status;
 	
+	//Crew
+	Boarder boarders;
+	Crew_Member crew;
 	
+	//Ship
+	std::string shipID;
+	bool hostile;
 	
 	std::string questEventID;
 	
@@ -151,7 +199,6 @@ private:
 	
 	bool returnEvent; //Ending the event early with <event/>
 };
-
 
 template <typename T>
 class Node{
