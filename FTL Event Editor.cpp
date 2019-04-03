@@ -128,9 +128,10 @@ public:
 	unsigned int maxLvl;
 	unsigned int maxGroup;
 	
+	//Event to be loaded
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
 	std::string eventID;
-    Event *p_subEvent;
+    Event *p_event;
 };
 
 class Event{
@@ -138,7 +139,7 @@ public:
 
 	Event();
 	~Event();
-
+	
 	bool unique;
 
 	//Event text
@@ -181,34 +182,47 @@ public:
 	
 	std::string questEventID;
 	
-    Choice choices[MAX_NUM_CHOICES];
+    Linked_List<Choice> choices;
 	
 	bool returnEvent; //Ending the event early with <event/>
 };
 
 Event::Event()
-/*unique{0},
+unique{0},
 textType{-1},
 textID{""},
+
 distress{0},
 repair{0},
 store{0},
 environment{""},
 target{""},
+
 modifyPursuit{0},
 revealMap{0},
 secretSector{0},
 unlockShip{""},
 fleet{""},
-level.reward{""},
-level.*/
+
+reward.level{""},
+reward.rewardType{""},
+
+damage.amount
+
+
 {
+	for (int i = 0, i < 2, i++){
+		
+		items.scrap[i] = 0;
+		items.fuel[i] = 0;
+		items.missiles[i] = 0;
+		items.drones[i] = 0;
+	}
 }
 
 class Ship{
 public:
 	
-	std::string id;
 	bool autoB; //auto_blueprint?
 	std::string blueprint;
 	
@@ -231,7 +245,7 @@ public:
     ~Node();
 
     std::string getID(); //Returns the ID
-    T getValue(); //Returns the stored value
+    virtual T getValue(); //Returns the stored value
     Node<T> *getNext(); //Returns next node
     Node<T> *getHead(); //Returns head list
 
