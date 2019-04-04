@@ -38,8 +38,13 @@
 //#include <math.h>
 
 #define PROGRAM_VERSION "0.1.0" //FROM Version
-#define MAX_NUM_CHOICES 8 //Events
 #define MAX_CREW_PROP 4 //Crew types
+#define ZERONE "(0 for no, 1 for yes): " //Event, Choice
+#define TYPE "(-1 for direct string, 0 for id=, 1 for load=): " //Reference or direct
+#define CONFIRM "y for yes, otherwise no: " //y confirmation
+#define INVALID "Invalid input, operation aborted."
+#deinfe NOABORT "(WARNING: You cannot abort this operation once it has begun)" //Cannot abort action once started
+
 
 class Choice;
 class Event;
@@ -184,13 +189,21 @@ timer{0}
         num[i] = 0;
 }
 
-class Choice{
+class Choice: public Node{ //T value is choice text
 public:
 
-    Choice();
+    Choice(); //TODO
     ~Choice();
+	
+	void printSelf(); //TODO
+	Event *getEvent(); //Gets the direct event
+	
+	void replaceValue();
+	void replaceEvent();
+	
+private:
 
-	std::string choice;
+	//std::string choice;
 
 	//Tags
 	bool hidden; //Result hidden
@@ -200,21 +213,30 @@ public:
 	unsigned int maxLvl;
 	unsigned int maxGroup;
 
-	//Event to be loaded
+	//Contents
+	int textType; //FROM Event -1 for direct string, 0 for id=, 1 for load=
+	std::string textID;
+	
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
 	std::string eventID;
     Event *p_event;
 };
 
-Choice::Choice():
-choice{""},
+Choice::Choice(
+std::string ID,
+Choice *p_next,
+):
+
+Node(ID, p_next, nullptr):
+//choice{""},
 hidden{0},
 blue{0},
-req{""},
+req{"None"},
 lvl{0},
 maxLvl{0},
 maxGroup{0},
-
+textType{-1},
+textID{""},
 eventType{-1},
 eventID{""},
 p_event{nullptr}
@@ -227,6 +249,157 @@ Choice::~Choice()
     p_event = nullptr;
 }
 
+void Choice::printSelf(){
+	
+	std::cout << "Name ID: " << id << std::endl;
+	std::cout << "Choice text: " << contents << std::endl;
+	std::cout << "Results text: ";
+	
+	if (textType >= 0)
+		std::cout << "(Reference) ";
+	
+	std::cout << textID << std::endl;
+	
+	std::cout << std::endl;
+	
+	std::cout << "Results hidden: " << hidden << std::endl;
+	std::cout << "Blue text: " << blue << std::endl;
+	std::cout << "System required: " << req << std::endl;
+	std::cout << "Minimum level: " << lvl << std::endl;
+	std::cout << "Maximum level: " << maxLvl << std::endl;
+	std::cout << "Maximum group: " << maxGroup << std::endl;
+	
+	std::cout << std::endl;
+	
+	std::cout << "Event ID: ";
+	
+	if (eventType >= 0)
+		std::cout << "(Reference) " << eventID;
+	
+	else if (p_event != nullptr)
+		std::cout << "(Subordinate) " << p_event->getID();
+	
+	std::cout << std::endl;
+}
+
+void Choice::replaceValue(){
+	
+	std::string command{""};
+	
+	std::string choice{""};
+	std::string result{""};
+	int resultType{-1};
+	bool hide{0};
+	bool bloo{0};
+	std::string required{"None"};
+	int level{0};
+	int maxLevel{0};
+	int maxGroups{0};
+	
+	std::cout << "Editing: " << id << std::endl;
+	std::cout << "To cancel, give invalid input or decline at end." << std::endl;
+	
+	std::cout << std::endl;
+	
+	std::cout << "Choice text: ";
+	std::cin >> choice;
+	std::cout << "Results text type " << TYPE;
+	std::cin >> resultType;
+	
+	if (resultType < -1 || resultType > 1){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "Results text: ";
+	std::cin >> result;
+	
+	std::cout << "Results hidden " << ZERONE;
+	std::cin >> hide;
+	
+	if (hide < 0 || hide > 1){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "Blue text " << ZERONE;
+	std::cin >> bloo;
+	
+	if (bloo < 0 || bloo > 1){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "System required text: ";
+	std::cin >> required;
+	std::cout << "Minimum level (positive integer): "
+	std::cin >> level;
+	
+	if (level < 0){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "Maximum level (positive integer): ";
+	std::cin >> maxLevel;
+	
+	if (maxLevel < 0){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "Maximum group (positive integer): ";
+	std::cin >> maxGroups;
+	
+	if (maxGroups < 0){
+		
+		std::cout << INVALID << std::endl;
+		return;
+	}
+	
+	std::cout << "Confirm changes? " << CONFIRM;
+	std::cin command;
+	
+	if (command == "y"){
+	
+		contents = choice;
+		textID = result;
+		textType = resultType;
+		hidden = hide;
+		blue = bloo;
+		req = required;
+		lvl = level;
+		maxLvl = maxLevel;
+		maxGroup = maxGroups;
+		
+		std::cout << "Done." << std::endl;
+		
+	}else
+		std::cout << "Operation aborted." std::endl;
+	
+	std::cout << std::endl;
+	
+	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
+	std::cin >> command;
+	
+	if (command == "y")
+		replaceEvent();
+	
+	std::cout << std::endl;
+	std::cout << "replaceValue in Choice class operation completed." << std::endl;
+}
+
+void Choice::replaceEvent(){
+	
+	std::cout << "
+	
+}
+
 class Event{
 public:
 
@@ -236,7 +409,7 @@ public:
 	bool Unique;
 
 	//Event text
-	int textType; //-1 for direct string, 0 for id=, 1 for load=
+	int textType; //FROM Choice -1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
 
 	//Beacon appearance only
@@ -322,6 +495,8 @@ public:
 
     Ship();
     ~Ship();
+	
+protected:
 
 	bool autoB; //auto_blueprint?
 	std::string blueprint;
@@ -350,12 +525,13 @@ public:
     Node(std::string ID, Node<T> *p_next = nullptr, Node<T> *p_head = nullptr);
     ~Node();
 
+	virtual void printSelf(); //Prints the node contents
     std::string getID(); //Returns the ID
-    virtual T getValue(); //Returns the stored value
+    //T getValue(); //Returns the stored value
     Node<T> *getNext(); //Returns next node
     Node<T> *getHead(); //Returns head list
 
-    void replaceValue(T newValue); //Replaces contents
+    virtual void replaceValue(T newValue); //Replaces contents
     void replaceNext(Node<T> *p_next); //Updates pointer to next node
     void replaceHead(Node<T> *p_head); //Updates pointer to list head
 
@@ -392,14 +568,30 @@ Node<T>::~Node() //FROM ~Linked_List()
 }
 
 template <typename T>
+void Node<T>::printSelf(){
+	
+	std::cout << "Name ID: " << id << std::endl;
+    std::cout << "Contents: " << contents << std::endl;
+	std::cout << "Subnodes:" << std::endl;
+
+    for(Node<T> *p_subNode{p_listHead}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
+        std::cout << " - " <<p_subNode->getID() << std::endl;
+		
+        //if (p_subNode == nullptr)
+        //    std::cout << std::endl;
+    }
+	
+}
+
+template <typename T>
 std::string Node<T>::getID(){
     return id;
 }
 
-template <typename T>
+/*template <typename T>
 T Node<T>::getValue(){
     return contents;
-}
+}*/
 
 template <typename T>
 Node<T> *Node<T>::getNext(){
@@ -541,19 +733,7 @@ Node<T> *Linked_List<T>::findLinearNode(std::string findID){
 
 template <typename T>
 void Linked_List<T>::printNode(Node<T> *p_current){
-
-    std::cout << p_current->getID() << std::endl;
-    std::cout << p_current->getValue() << std::endl;
-
-    //if (p_current->getHead() != nullptr) //FROM: printList
-    //        std::cout << "Sublist: ";
-
-    for(Node<T> *p_subNode{p_current->getHead()}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
-
-        std::cout << " - " <<p_subNode->getID() << std::endl;
-        //if (p_subNode == nullptr)
-        //    std::cout << std::endl;
-    }
+	p_current->printSelf();
 }
 
 template <typename T>
@@ -726,12 +906,14 @@ int main(){
             if (command == "HELP"){
 
                 std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
-                std::cout << "EXIT - Exits the program." << std::endl;
-                std::cout << "PRINT - Prints the current list of nodes." << std::endl;
-                std::cout << "FIND - Searches for the node specificed and prints its contents." << std::endl;
+                std::cout << "EXIT   - Exits the program." << std::endl;
+                std::cout << "PRINT  - Prints the current list of nodes." << std::endl;
+                std::cout << "FIND   - Searches for the node specificed and prints its contents." << std::endl;
                 std::cout << "CREATE - Creates a new node with the specificed name without duplicates." << std::endl;
-                std::cout << "EDIT - Replaces the contents of the node with the specified input." << std::endl;
+                std::cout << "EDIT   - Replaces the contents of the node with the specified input." << std::endl;
                 std::cout << "DELETE - Deletes the specified node and its sub-nodes." << std::endl;
+				//std::cout << "IMPORT - Imports an XML file into the program." << std::endl;
+				//std::cout << "EXPORT - Exports program contents into an XML file." << std::endl;
                 //std::cout << "DESTROY - (Dangerous) Deletes an entire list." << std::endl;
                 std::cout << std::endl << "WARNING: You will not be able to cancel an operation once it has begun." << std::endl;
 
