@@ -1,7 +1,7 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.0.6 //FROM PROGRAM_VERSION
+// Version: 0.1.0 //FROM PROGRAM_VERSION
 // For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
@@ -10,70 +10,338 @@
 // Notes:   For FTL Faster-than-Light. Use at your own risk; no liability is held to the author of this program.
 */
 
-//Program Conventions
+/*
+// Program Conventions
 //
-//TODO: Things that will need to be modified later
-//!!!!: Urgency
-//FROM: Matches code(-ish) from other sections
-//TEST: For testing
+// TODO: Things that will need to be modified later
+// !!!!: Urgency
+// FROM: Matches code(-ish) from other sections
+// TEST: For testing
 //
-//id  : Internal identification
-//ID  : External identification
+// id  : Internal identification
+// ID  : External identification
 //
-//One line separations between categories. Exceptions: One liners, bracket-only lines
-//Classes: Constructor/destructor, read functions, write functions
+// One line separations between categories. Exceptions: One liners, bracket-only lines
+// Classes: Constructor/destructor, read functions, write functions
+*/
+
+/*
+// Program Notes
 //
-//Program Notes
-//
-//CURRENT: Subclass crap (Event class, Choice class) headers, Node's privates
-//TODO: Add Ship class, other FTL-specific lists
+// CURRENT: Add subclasses to Node to handle anything with "name" (event, eventList, [equipment], text, textList, crewMember id, ship, basically anything with an ID).
+// TODO   : Handle "[...]List" since they won't have names.
+*/
 
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.0.6" //FROM Version
-#define MAX_NUM_CHOICES 12
+#define PROGRAM_VERSION "0.1.0" //FROM Version
+#define MAX_NUM_CHOICES 8 //Events
+#define MAX_CREW_PROP 4 //Crew types
 
-//class Choice;
-//class Event;
+class Choice;
+class Event;
+
 template <typename T>
 class Node;
 template <typename T>
 class Linked_List;
 int main();
 
-//0.1.0
-/*class Choice: public Event{ //TODO: Fix the subclass header definition
+//Data containers
+class Auto_Reward{
 public:
 
-	Choice(); //TODO: FIX
-	~Choice();
+    Auto_Reward();
 
-	bool hidden; //Tags TODO: Privatize
+	std::string level;
+	std::string rewardType;
+};
+
+Auto_Reward::Auto_Reward():
+level{""},
+rewardType{""}
+{
+}
+
+class Item_Modify{ //TODO: Implement steal
+public:
+
+    Item_Modify();
+
+	int scrap[2]; //min, max
+	int fuel[2];
+	int missiles[2];
+	int drones[2];
+};
+
+Item_Modify::Item_Modify(){
+
+    for (int i{0}; i < 2; i++){
+
+		scrap[i] = 0;
+		fuel[i] = 0;
+		missiles[i] = 0;
+		drones[i] = 0;
+	}
+}
+
+class System_Damage{
+public:
+
+    System_Damage();
+
+	int amount;
+	std::string system;
+	std::string effect;
+};
+
+System_Damage::System_Damage():
+amount{0},
+system{""},
+effect{""}
+{
+}
+
+class System_Status{
+public:
+
+    System_Status();
+
+	std::string type;
+	std::string target;
+	std::string system;
+	unsigned int amount;
+};
+
+System_Status::System_Status():
+type{""},
+target{""},
+system{""},
+amount{0}
+{
+}
+
+class Crew_Boarder{
+public:
+
+    Crew_Boarder();
+
+	std::string classRace;
+	unsigned int num[2]; //Max must be below 9
+	bool breach;
+};
+
+Crew_Boarder::Crew_Boarder():
+classRace{""},
+breach{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
+
+class Crew_Member{
+public:
+
+    Crew_Member();
+
+	int amount;
+	std::string skill; //all_skills, pilot, etc.
+	unsigned int level; //1 or 2
+	std::string classRace;
+	std::string id; //Force name
+
+	double proportion; //For Ship class crew proportion
+};
+
+Crew_Member::Crew_Member():
+amount{0},
+skill{""},
+level{0},
+classRace{""},
+id{""},
+proportion{0}
+{
+}
+
+class Surrender_Escape{
+public:
+
+    Surrender_Escape();
+
+	double chance;
+	int timer;
+	int num[2];
+};
+
+Surrender_Escape::Surrender_Escape():
+chance{0},
+timer{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
+
+class Choice{
+public:
+
+    Choice();
+    ~Choice();
+
+	std::string choice;
+
+	//Tags
+	bool hidden; //Result hidden
 	bool blue;
 	std::string req;
-	unsigned short int lvl;
-	unsigned short int maxLvl;
-	unsigned short int maxGroup;
+	unsigned int lvl;
+	unsigned int maxLvl;
+	unsigned int maxGroup;
 
-    std::string eventID;
+	//Event to be loaded
+	int eventType; //-1 for direct event, 0 for id=, 1 for load=
+	std::string eventID;
+    Event *p_event;
 };
 
-class Event: public Node{ //T value is the unique tag of boolean
+Choice::Choice():
+choice{""},
+hidden{0},
+blue{0},
+req{""},
+lvl{0},
+maxLvl{0},
+maxGroup{0},
+
+eventType{-1},
+eventID{""},
+p_event{nullptr}
+{
+}
+
+Choice::~Choice()
+{
+    delete p_event;
+    p_event = nullptr;
+}
+
+class Event{
 public:
 
-    Event(std::string ID); //TODO: FIX
-    ~Event();
+	Event();
+	~Event();
 
-private:
+	bool Unique;
 
+	//Event text
+	int textType; //-1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
-    //std::string shipID;
-    std::string choiceID[MAX_NUM_CHOICES];
+
+	//Beacon appearance only
+	bool distress;
+	bool repair;
+	bool store;
+	std::string environment;
+	std::string target;
+
+	//Single-line things
+	int modifyPursuit;
+	bool revealMap;
+	bool secretSector;
+	std::string unlockShip;
+	std::string fleet; //Background ships
+
+	//Resources
+	Auto_Reward reward;
+	Item_Modify items;
+	std::string augment;
+	std::string drone;
+	std::string weapon;
+	std::string removeEquip;
+
+	//System
+	System_Damage damage;
+	System_Status status;
+
+	//Crew
+	Crew_Boarder boarders;
+	Crew_Member crew;
+
+	//Ship
+	std::string shipID;
+	bool hostile;
+
+	std::string questID;
+
+    Linked_List<Choice> *p_choices;
+
+	bool returnEvent; //Ending the event early with <event/>
 };
-*/
+
+Event::Event():
+Unique{0},
+textType{-1},
+textID{""},
+
+distress{0},
+repair{0},
+store{0},
+environment{""},
+target{""},
+
+modifyPursuit{0},
+revealMap{0},
+secretSector{0},
+unlockShip{""},
+fleet{""},
+
+augment{""},
+drone{""},
+weapon{""},
+removeEquip{""},
+
+shipID{""},
+hostile{0},
+questID{""},
+
+p_choices{nullptr},
+returnEvent{0}
+{
+}
+
+Event::~Event()
+{
+    delete p_choices;
+    p_choices = nullptr;
+}
+
+class Ship{
+public:
+
+    Ship();
+    ~Ship();
+
+	bool autoB; //auto_blueprint?
+	std::string blueprint;
+
+	//Surrender_Escape ; TODO
+
+	Event destroyed;
+	Event deadCrew;
+	Event surrender;
+	Event escape;
+	Event gotaway;
+
+	Crew_Member crew[MAX_CREW_PROP];
+};
+
+Ship::Ship():
+autoB{0},
+blueprint{""}
+{
+}
 
 template <typename T>
 class Node{
@@ -83,7 +351,7 @@ public:
     ~Node();
 
     std::string getID(); //Returns the ID
-    T getValue(); //Returns the stored value
+    virtual T getValue(); //Returns the stored value
     Node<T> *getNext(); //Returns next node
     Node<T> *getHead(); //Returns head list
 
@@ -419,7 +687,7 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 
 				else
 					p_previousNode->replaceHead(p_currentNode->getNext()); //Update previous node's head
-			
+
 			}else
 				p_listHead = nullptr;
 
@@ -506,7 +774,7 @@ int main(){
 
                     if (textList.findNode(parent) == nullptr)
                         parent = "";
-					
+
                     if (textList.createNode(command, parent) == 1){
 
                         std::cout << command << " created successfully";
@@ -561,7 +829,7 @@ int main(){
 
     }while(!exit);
 
-    std::cout << "Ending program..." << std::endl;
+    std::cout << "Ending program." << std::endl;
 
     //TEST
     //command = "BBBB";
