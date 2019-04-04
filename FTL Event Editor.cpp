@@ -54,69 +54,141 @@ int main();
 class Auto_Reward{
 public:
 
+    Auto_Reward();
+
 	std::string level;
 	std::string rewardType;
-	
 };
+
+Auto_Reward::Auto_Reward():
+level{""},
+rewardType{""}
+{
+}
 
 class Item_Modify{ //TODO: Implement steal
 public:
-	
+
+    Item_Modify();
+
 	int scrap[2]; //min, max
 	int fuel[2];
 	int missiles[2];
 	int drones[2];
 };
 
-class Damage{
+Item_Modify::Item_Modify(){
+
+    for (int i{0}; i < 2; i++){
+
+		scrap[i] = 0;
+		fuel[i] = 0;
+		missiles[i] = 0;
+		drones[i] = 0;
+	}
+}
+
+class System_Damage{
 public:
+
+    System_Damage();
 
 	int amount;
 	std::string system;
 	std::string effect;
 };
 
-class Status{
+System_Damage::System_Damage():
+amount{0},
+system{""},
+effect{""}
+{
+}
+
+class System_Status{
 public:
-	
+
+    System_Status();
+
 	std::string type;
 	std::string target;
 	std::string system;
 	unsigned int amount;
 };
 
-class Boarder{
+System_Status::System_Status():
+type{""},
+target{""},
+system{""},
+amount{0}
+{
+}
+
+class Crew_Boarder{
 public:
-	
+
+    Crew_Boarder();
+
 	std::string classRace;
-	unsigned int min;
-	unsigned int max; //Must be below 9
+	unsigned int num[2]; //Max must be below 9
 	bool breach;
 };
 
+Crew_Boarder::Crew_Boarder():
+classRace{""},
+breach{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
+
 class Crew_Member{
 public:
-	
+
+    Crew_Member();
+
 	int amount;
 	std::string skill; //all_skills, pilot, etc.
 	unsigned int level; //1 or 2
 	std::string classRace;
 	std::string id; //Force name
-	
+
 	double proportion; //For Ship class crew proportion
 };
-	
+
+Crew_Member::Crew_Member():
+amount{0},
+skill{""},
+level{0},
+classRace{""},
+id{""},
+proportion{0}
+{
+}
+
 class Surrender_Escape{
 public:
-	
+
+    Surrender_Escape();
+
 	double chance;
 	int timer;
-	int min;
-	int max;
+	int num[2];
 };
+
+Surrender_Escape::Surrender_Escape():
+chance{0},
+timer{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
 
 class Choice{
 public:
+
+    Choice();
+    ~Choice();
 
 	std::string choice;
 
@@ -127,68 +199,89 @@ public:
 	unsigned int lvl;
 	unsigned int maxLvl;
 	unsigned int maxGroup;
-	
+
 	//Event to be loaded
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
 	std::string eventID;
     Event *p_event;
 };
 
+Choice::Choice():
+choice{""},
+hidden{0},
+blue{0},
+req{""},
+lvl{0},
+maxLvl{0},
+maxGroup{0},
+
+eventType{-1},
+eventID{""},
+p_event{nullptr}
+{
+}
+
+Choice::~Choice()
+{
+    delete p_event;
+    p_event = nullptr;
+}
+
 class Event{
 public:
 
 	Event();
 	~Event();
-	
-	bool unique;
+
+	bool Unique;
 
 	//Event text
 	int textType; //-1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
-	
+
 	//Beacon appearance only
 	bool distress;
 	bool repair;
 	bool store;
 	std::string environment;
 	std::string target;
-	
+
 	//Single-line things
 	int modifyPursuit;
 	bool revealMap;
 	bool secretSector;
 	std::string unlockShip;
 	std::string fleet; //Background ships
-	
+
 	//Resources
 	Auto_Reward reward;
 	Item_Modify items;
 	std::string augment;
 	std::string drone;
 	std::string weapon;
-	std::string remove;
-	
+	std::string removeEquip;
+
 	//System
-	Damage damage;
-	Status status;
-	
+	System_Damage damage;
+	System_Status status;
+
 	//Crew
-	Boarder boarders;
+	Crew_Boarder boarders;
 	Crew_Member crew;
-	
+
 	//Ship
 	std::string shipID;
 	bool hostile;
-	
-	std::string questEventID;
-	
-    Linked_List<Choice> choices;
-	
+
+	std::string questID;
+
+    Linked_List<Choice> *p_choices;
+
 	bool returnEvent; //Ending the event early with <event/>
 };
 
-Event::Event()
-unique{0},
+Event::Event():
+Unique{0},
 textType{-1},
 textID{""},
 
@@ -204,38 +297,51 @@ secretSector{0},
 unlockShip{""},
 fleet{""},
 
-reward.level{""},
-reward.rewardType{""},
+augment{""},
+drone{""},
+weapon{""},
+removeEquip{""},
 
-damage.amount
+shipID{""},
+hostile{0},
+questID{""},
 
-
+p_choices{nullptr},
+returnEvent{0}
 {
-	for (int i = 0, i < 2, i++){
-		
-		items.scrap[i] = 0;
-		items.fuel[i] = 0;
-		items.missiles[i] = 0;
-		items.drones[i] = 0;
-	}
+}
+
+Event::~Event()
+{
+    delete p_choices;
+    p_choices = nullptr;
 }
 
 class Ship{
 public:
-	
+
+    Ship();
+    ~Ship();
+
 	bool autoB; //auto_blueprint?
 	std::string blueprint;
-	
+
 	//Surrender_Escape ; TODO
-	
+
 	Event destroyed;
 	Event deadCrew;
 	Event surrender;
 	Event escape;
 	Event gotaway;
-	
+
 	Crew_Member crew[MAX_CREW_PROP];
 };
+
+Ship::Ship():
+autoB{0},
+blueprint{""}
+{
+}
 
 template <typename T>
 class Node{
@@ -581,7 +687,7 @@ int Linked_List<T>::deleteNode(std::string deleteID){
 
 				else
 					p_previousNode->replaceHead(p_currentNode->getNext()); //Update previous node's head
-			
+
 			}else
 				p_listHead = nullptr;
 
@@ -668,7 +774,7 @@ int main(){
 
                     if (textList.findNode(parent) == nullptr)
                         parent = "";
-					
+
                     if (textList.createNode(command, parent) == 1){
 
                         std::cout << command << " created successfully";
@@ -723,7 +829,7 @@ int main(){
 
     }while(!exit);
 
-    std::cout << "Ending program..." << std::endl;
+    std::cout << "Ending program." << std::endl;
 
     //TEST
     //command = "BBBB";
