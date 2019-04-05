@@ -28,8 +28,8 @@
 /*
 // Program Notes
 //
-// CURRENT: Add subclasses to Node to handle anything with "name" (event, eventList, [equipment], text, textList, crewMember id, ship, basically anything with an ID).
-// TODO   : Handle "[...]List" since they won't have names.
+// CURRENT: Test the crap out of the event editor.
+// TODO   : Actually loading in an event to play through.
 */
 
 #include <iostream>
@@ -418,7 +418,6 @@ int Linked_List<T>::deleteNode(std::string deleteID){
     }
 }
 
-/*TODO
 //Data containers
 class Auto_Reward{
 public:
@@ -428,6 +427,13 @@ public:
         std::cout << "Reward level: " << level << std::endl;
         std::cout << "Reward type: " << rewardType << std::endl;
     }
+	
+	void replace(){
+		std::cout << "Reward level: ";
+		std::cin >> level;
+        std::cout << "Reward type: ";
+		std::cin >> rewardType;
+	}
 
 	std::string level;
 	std::string rewardType;
@@ -439,7 +445,7 @@ rewardType{""}
 {
 }
 
-class Item_Modify{ //TODO: Implement steal
+class Item_Modify{
 public:
 
     Item_Modify();
@@ -453,15 +459,40 @@ public:
         std::cout << " -Missiles max: " << missiles[1] << std::endl;
         std::cout << " -Drones min: " << drones[0] << std::endl;
         std::cout << " -Drones max: " << drones[1] << std::endl;
+		std::cout << " -Steal: " << steal << std::endl;
     }
+	
+	void replace(){
+        std::cout << "Scrap min (integer): ";
+		std::cin >> scrap[0];
+        std::cout << "Scrap max (integer): ";
+		std::cin >> scrap[1];
+        std::cout << "Fuel min (integer): ";
+		std::cin >> fuel[0];
+        std::cout << "Fuel max (integer): ";
+		std::cin >> fuel[1];
+        std::cout << "Missiles min (integer): ";
+		std::cin >> missiles[0];
+        std::cout << "Missiles max (integer): ";
+		std::cin >> missiles[1];
+        std::cout << "Drones min (integer): ";
+		std::cin >> drones[0];
+        std::cout << "Drones max (integer): ";
+		std::cin >> drones[1];
+		std::cout << "Steal (positive integer): ";
+		std::cin >> steal;
+	}
 
 	int scrap[2]; //min, max
 	int fuel[2];
 	int missiles[2];
 	int drones[2];
+	bool steal;
 };
 
-Item_Modify::Item_Modify(){
+Item_Modify::Item_Modify():
+steal{0}
+{
 
     for (int i{0}; i < 2; i++){
 
@@ -481,6 +512,15 @@ public:
         std::cout << "Damaged system: " << system << std::endl;
         std::cout << "Damage effect: " << effect << std::endl;
     }
+	
+	void replace(){
+		std::cout << "Damage amount (integer): ";
+		std::cin >> amount;
+        std::cout << "Damaged system: ";
+		std::cin >> system;
+        std::cout << "Damage effect: ";
+		std::cin >> effect;
+	}
 
 	int amount;
 	std::string system;
@@ -504,6 +544,17 @@ public:
         std::cout << "Status system: " << system << std::endl;
         std::cout << "Status amount: " << amount << std::endl;
     }
+	
+	void replace(){
+		std::cout << "Status type: ";
+		std::cin >> type;
+        std::cout << "Status target ship: ";
+		std::cin >> target;
+        std::cout << "Status system: ";
+		std::cin >> system;
+        std::cout << "Status amount: ";
+		std::cin >> amount;
+	}
 
 	std::string type;
 	std::string target;
@@ -530,6 +581,17 @@ public:
         std::cout << "Boarder breach: " << breach << std::endl;
     }
 
+	void replace(){
+		std::cout << "Boarder race: "
+		std::cin >> classRace;
+        std::cout << "Minimum (positive integer): ";
+		std::cin >> num[0];
+        std::cout << "Maximum (positive integer): ";
+		std::cin >> num[1];
+        std::cout << "Boarder breach (positive integer): ";
+		std::cin >> breach;
+	}
+	
 	std::string classRace;
 	unsigned int num[2]; //Max must be below 9
 	bool breach;
@@ -553,6 +615,24 @@ public:
         std::cout << "Crew skill level: " << level << std::endl;
         std::cout << "Crew name ID: " << id << std::endl;
     }
+	
+	void replace(){
+		std::cout << "Crew number (integer): "
+		std::cin >> amount;
+        std::cout << "Crew skill: ";
+		std::cin >> skill;
+        std::cout << "Crew skill level (positive integer): ";
+		std::cin >> level;
+        std::cout << "Crew name ID: ";
+		std::cin >> id;
+		
+	void printProp()
+		std::cout << "Crew proportion: " << proportion << std::endl;
+	
+	void replaceProp(){
+		std::cout << "Crew proportion (number): ";
+		std::cin >> proportion;
+	}
 
 	int amount;
 	std::string skill; //all_skills, pilot, etc.
@@ -580,9 +660,20 @@ public:
     void print(){
         std::cout << "Enemy Chance: " << chance << std::endl;
         std::cout << "Enemy Timer: " << timer << std::endl;
-        std::cout << "Timer min: " << num[0] << std::endl;
-        std::cout << "TImer max: " << num[1] << std::endl;
+        std::cout << "Minimum: " << num[0] << std::endl;
+        std::cout << "Maximum: " << num[1] << std::endl;
     }
+	
+	void replace(){
+		std::cout << "Enemy Chance (number): ";
+		std::cin >> chance;
+        std::cout << "Enemy Timer (integer): ";
+		std::cin >> timer;
+        std::cout << "Minimum (integer): ";
+		std::cin >> num[0];
+        std::cout << "Maximum (integer): ";
+		std::cin >> num[1];
+	}
 
 	double chance;
 	int timer;
@@ -596,20 +687,20 @@ timer{0}
     for (int i{0}; i < 2; i++)
         num[i] = 0;
 }
-*/
+
 class Choice: public Node<std::string>{ //T value is choice text
 public:
 
     Choice(std::string ID, Choice *p_next);
     ~Choice();
 
-	void printSelf(); //TODO
-	/*TODO Event *getEvent(); //Gets the direct event
+	void printSelf();
+	Event *getEvent(); //Gets the direct event
 
 	void replaceValue();
-	void replaceEvent();*/
+	void replaceEvent();
 
-protected:/*TODO
+protected:
 
 	//std::string choice;
 
@@ -627,14 +718,13 @@ protected:/*TODO
 
 	int eventType; //-1 for direct event, 0 for id=, 1 for load=
 	std::string eventID;
-    Event *p_event;*/
-    int choiceData;
+    Event *p_event;
 };
 
 Choice::Choice(std::string ID, Choice *p_next):
 Node<std::string>(ID, p_next, nullptr),
 //choice{""},
-/*TODO hidden{0},
+hidden{0},
 blue{0},
 req{"None"},
 lvl{0},
@@ -644,22 +734,22 @@ textType{-1},
 textID{""},
 eventType{-1},
 eventID{""},
-p_event{nullptr}*/
-choiceData{19}
+p_event{nullptr}
 {
 }
 
 Choice::~Choice()
 {
-    /*TODO delete p_event;
-    p_event = nullptr;*/
+    TODO delete p_event;
+    p_event = nullptr;
 }
 
 void Choice::printSelf(){
-    std::cout << "TEST " << choiceData << std::endl;
 
-    /*TODO
 	std::cout << "Name ID: " << id << std::endl;
+	
+	std::cout << std::endl;
+	
 	std::cout << "Choice text: " << contents << std::endl;
 	std::cout << "Results text: ";
 
@@ -687,9 +777,13 @@ void Choice::printSelf(){
 	else if (p_event != nullptr)
 		std::cout << "(Subordinate) " << p_event->getID();
 
-	std::cout << std::endl;*/
+	std::cout << std::endl;
 }
-/*TODO
+
+Event *Choice::getEvent(){
+	return p_event;
+}
+
 void Choice::replaceValue(){
 
 	std::string command{""};
@@ -792,7 +886,7 @@ void Choice::replaceValue(){
 
 	std::cout << std::endl;
 
-	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
+	std::cout << "Edit event ID? " << CONFIRM;
 	std::cin >> command;
 
 	if (command == "y")
@@ -807,7 +901,7 @@ void Choice::replaceEvent(){
 	std::cout << "Editing: " << id << std::endl;
 	std::cout << "To cancel, give invalid input. Otherwise, the event will be erased." << std::endl;
 
-	std::string command{""};
+	int command{0};
 
 	std::cout << "Choice event type " << TYPE;
 	std::cin >> command;
@@ -831,7 +925,7 @@ void Choice::replaceEvent(){
         std::cin >> eventID;
 	}
 	std::cout << "replaceEvent in Choice class operation completed." << std::endl;
-}*/
+}
 
 class Event: public Node<bool>{ //T value is unique tag
 public:
@@ -841,15 +935,13 @@ public:
 
 	void printSelf(); //TODO
 
-	/*TODO void replaceValue();
-	void replaceChoice();*/
+	void replaceValue();
+	void replaceChoice();
 
 protected:
 
-    int eventData;
-
 	//bool Unique;
-    /*TODO
+
 	//Event text
 	int textType; //FROM Choice -1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
@@ -888,17 +980,16 @@ protected:
 	std::string shipID;
 	bool hostile;
 
-    Linked_List<std::string> *p_choices;
-
     std::string questID;
-	bool returnEvent; //Ending the event early with <event/>*/
+	bool returnEvent; //Ending the event early with <event/>
+	
+	Linked_List<std::string> *p_choices;
 };
 
 Event::Event(std::string ID, Event *p_next):
 Node<bool>(ID, p_next, nullptr),
-eventData{42}
 //Unique{0},
-/*TODO textType{-1},
+textType{-1},
 textID{""},
 
 distress{0},
@@ -921,22 +1012,20 @@ removeEquip{""},
 shipID{""},
 hostile{0},
 
-p_choices{new Linked_List<std::string>},
 questID{""},
-returnEvent{0}*/
+returnEvent{0}
+p_choices{new Linked_List<std::string>},
 {
 }
 
 Event::~Event()
 {
-    /*TODO delete p_choices;
-    p_choices = nullptr;*/
+    TODO delete p_choices;
+    p_choices = nullptr;
 }
 
 void Event::printSelf(){
-    std::cout << "TEST " << eventData << std::endl;
 
-    /*TODO
     std::cout << "Name ID: " << id << std::endl;
 	std::cout << "Unique tag: " << contents << std::endl;
 	std::cout << "Event text: ";
@@ -993,121 +1082,210 @@ void Event::printSelf(){
 	std::cout << "Quest: " << questID << std::endl;
 	std::cout << "Forcibly end event: " << returnEvent << std::endl;
 
-    p_choices->printList();*/
+	std::cout << std::endl;
+	
+	std::cout << "Choices: " << std::endl;
+	
+	for (Choice *p_currentChoice{p_choice->getHead()}; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext())
+		std::cout << p_currentChoice->getID << ". " << p_currentChoice->getValue;
 }
-/*TODO
+
 void Event::replaceValue(){ //TODO!!!!
 
 	std::string command{""};
-
-	std::string choice{""};
-	std::string result{""};
-	int resultType{-1};
-	bool hide{0};
-	bool bloo{0};
-	std::string required{"None"};
-	int level{0};
-	int maxLevel{0};
-	int maxGroups{0};
-
+	int numCom{0};
+	
 	std::cout << "Editing: " << id << std::endl;
-	std::cout << "To cancel, give invalid input or decline at end." << std::endl;
+	std::cout << "To cancel, give invalid input. Warning: changes you have made before cancelling will still exist." << std::endl;
 
 	std::cout << std::endl;
-
-	std::cout << "Choice text: ";
-	std::cin >> choice;
-	std::cout << "Results text type " << TYPE;
-	std::cin >> resultType;
-
-	if (resultType < -1 || resultType > 1){
-
-		std::cout << INVALID << std::endl;
+	
+	std::cout << "Unique tag: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
+	
+	contents = numCom;
+	
+	std::cout << "Event text: ";
+	std::cin >> textID;
 
-	std::cout << "Results text: ";
-	std::cin >> result;
-
-	std::cout << "Results hidden " << ZERONE;
-	std::cin >> hide;
-
-	if (hide < 0 || hide > 1){
-
-		std::cout << INVALID << std::endl;
+	std::cout << "Map distress: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
+	
+	distress = numCom;
 
-	std::cout << "Blue text " << ZERONE;
-	std::cin >> bloo;
-
-	if (bloo < 0 || bloo > 1){
-
-		std::cout << INVALID << std::endl;
+	std::cout << "Map repair: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
-
-	std::cout << "System required text: ";
-	std::cin >> required;
-	std::cout << "Minimum level (positive integer): "
-	std::cin >> level;
-
-	if (level < 0){
-
-		std::cout << INVALID << std::endl;
+	
+	repair = numCom;
+	
+	std::cout << "Map store: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
+	
+	store = numCom;
+	
+	std::cout << "Environmental hazard: ";
+	std::cin >> environment;
+	std::cout << "PDS target: ";
+	std::cin >> target;
 
-	std::cout << "Maximum level (positive integer): ";
-	std::cin >> maxLevel;
-
-	if (maxLevel < 0){
-
-		std::cout << INVALID << std::endl;
+	std::cout << "Fleet pursuit modifier (integer): ";
+	std::cin >> modifyPursuit;
+	std::cout << "Reveal sector: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
-
-	std::cout << "Maximum group (positive integer): ";
-	std::cin >> maxGroups;
-
-	if (maxGroups < 0){
-
-		std::cout << INVALID << std::endl;
+	
+	revealMap = numCom;
+	
+	std::cout << "Secret sector: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
 		return;
-	}
+	
+	secretSector = numCom;
+	
+	std::cout << "Unlock ship: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
+		return;
+	
+	unlockShip = numCom;
 
-	std::cout << "Confirm changes? " << CONFIRM;
-	std::cin command;
+	std::cout << "Background ships: ";
+	std::cin >> fleet;
 
-	if (command == "y"){
+    reward.replace();
+	items.replace();
 
-		contents = choice;
-		textID = result;
-		textType = resultType;
-		hidden = hide;
-		blue = bloo;
-		req = required;
-		lvl = level;
-		maxLvl = maxLevel;
-		maxGroup = maxGroups;
+	std::cout << "Augment: ";
+	std::cin >> augment;
+	std::cout << "Drone: ";
+	std::cin >> drone;
+	std::cout << "Weapon: ";
+	std::cin >> weapon;
+	std::cout << "Remove equipment: "
+	std::cin >> removeEquip;
 
-		std::cout << "Done." << std::endl;
+	damage.replace();
+	status.replace();
 
-	}else
-		std::cout << "Operation aborted." std::endl;
+	//Crew
+	boarders.replace();
+	crew.replace();
 
+	//Ship
+	std::cout << "Ship: "
+	std::cin >> shipID;
+	std::cout << "Hostile: " << ZERONE;
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
+		return;
+	
+	hostile = numCom;
+
+	std::cout << "Quest: ";
+	std::cin >> questID;
+	std::cout << "Forcibly end event: "
+	std::cin >> numCom;
+	
+	if (numCom < 0 || numCom > 1)
+		return;
+	
+	returnEvent = numCom;
+	
 	std::cout << std::endl;
 
-	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
+	std::cout << "Edit choice list? " << CONFIRM;
 	std::cin >> command;
 
 	if (command == "y")
-		replaceEvent();
+		replaceChoice();
 
 	std::cout << std::endl;
-	std::cout << "replaceValue in Choice class operation completed." << std::endl;
+	std::cout << "replaceValue in Event class operation completed." << std::endl;
 }
-*/
+
+void Event::replaceChoice(){
+	
+	std::string command{""};
+	
+	while(command != "EXIT"){ //FROM main
+		
+		std::cout << "Editing: " << id << std::endl;
+		std::cout << "ID's here don't really matter except for determining event order." << std::endl;
+		std::cin >> command;
+		
+		if (command == "HELP"){
+
+                std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
+                std::cout << "EXIT  - Exits the event's choice editor." << std::endl;
+                std::cout << "PRINT - Prints the current list of choices." << std::endl;
+                std::cout << "NEW   - Creates a new choice with the specificed name without duplicates." << std::endl;
+                std::cout << "ERASE - Deletes the specified choice and its sub-nodes." << std::endl;
+                std::cout << std::endl << "WARNING: You will not be able to cancel an operation once it has begun." << std::endl;
+		
+		}else if (command == "PRINT")
+			p_choices->printList();
+			
+		else if (command == "NEW"){
+			
+			std::cout << "New ID name: ";
+            std::cin >> command;
+
+            if (p_choices->findNode(command) != nullptr)
+                std::cout << "An ID with this name already exists." << std::endl;
+
+            else if (!p_choices->emptyList()){
+
+                if (p_choices->createNode(command, "") == 1)
+                        std::cout << command << " created successfully." << std::endl;
+
+                else
+                    std::cout << "ERROR: Invalid return " << textList.createNode(command, parent) << " on createNode." << std::endl;
+            }
+			
+		}else if (command == "ERASE"){
+			
+			std::cout << "ID to delete: ";
+            std::cin >> command;
+
+            if (p_choices->findNode(command) == nullptr)
+                std::cout << "Not found." << std::endl;
+
+            else{
+
+                if (p_choices->deleteNode(command))
+                    std::cout << command << " successfully deleted." << std::endl;
+
+                else
+                    std::cout << "ERROR: Invalid return on deleteNode." << std::endl;
+			}
+		}
+	}
+	
+	std::cout << "Replacing ID's with numbers in order..." << std::endl; //!!!!
+	for (Choice *p_currentChoice{p_choice->getHead()}; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext())
+		std::cout << p_currentChoice->getID << ". " << p_currentChoice->getValue;
+	
+	std::cout << "replaceChoice in Event class operation completed." << std::endl;
+}
+
 class Ship: public Node<bool>{ //T value is autoB
 public:
 
@@ -1118,15 +1296,15 @@ protected:
 	//bool autoB; //auto_blueprint?
 	std::string blueprint;
 
-	//Surrender_Escape ; TODO
+	//Surrender_Escape chance; TODO
 
-	/*TODO Event destroyed;
+	Event destroyed;
 	Event deadCrew;
 	Event surrender;
 	Event escape;
 	Event gotaway;
 
-	Crew_Member crew[MAX_CREW_PROP];*/
+	Crew_Member crew[MAX_CREW_PROP];
 };
 
 Ship::Ship(std::string ID, Event *p_next):
@@ -1138,35 +1316,52 @@ blueprint{""}
 
 //Global
 
-void findNode(){
+void loadEvent(Event *p_event){ //!!!!
+	
+	int command{1};
+    Choice *p_choice{nullptr};
 
-    std::cout << "Text ID to find: ";
-    std::cin >> command;
-    p_current = textList.findNode(command);
+    std::cout << std::endl;
 
-    if (p_current == nullptr)
-        std::cout << "Not found." << std::endl;
+    while (command >= 0){
+		
+		while (command == 1){
 
-    else{
-
-        Event<bool> *p_event{p_current};
-        Choice<std::string> *p_choice{nullptr};
-        bool event{0};
-
-        std::cout << std::endl;
-
-        while (1){
-
-            p_event->printSelf();
-            std::cout << std::endl;
-            std::cout << "Enter a number, or HELP: " << std::endl;
-
-        }
-        textList.printNode(p_current); //Finds the node, then prints its ID and contents
-
-    }
-
-
+			p_event->printSelf();
+			
+			std::cout << std::endl;
+			std::cout << "Enter an integer (0 to edit event and choice list, # to continue to choice, invalid to return to menu): ";
+			std::cin >> command;
+			std::cout << std::endl;
+		
+			if (command == 0)
+				p_event->replaceValue();
+		}
+		
+		p_choice = p_event->p_choices->findNode(std::to_string(command)) //Converts command to string and then searches p_event's
+		if (p_choice == nullptr)
+			command = -1;
+		
+		else
+			command == 0;
+		
+		while (command == 0){
+			
+			p_choice->printSelf();
+			std::cout << "Enter an integer (0 to edit choice and event type, 1 to continue to event, invalid to return to menu)" << std::endl;
+			std::cout << "Note: If the event is referenced you will be returned to menu. If you want edit the referenced event do it from there." << std::endl;
+			std::cin >> command;
+			std::cout << std::endl;
+			
+			if (command == 0)
+				p_choice->replaceValue();
+			
+		}
+		
+		p_event = p_choice->getEvent;
+		if (p_event == nullptr)
+			command = -1;
+	}
 }
 
 int main(){
@@ -1189,7 +1384,7 @@ int main(){
         std::cout << std::endl << "Waiting for user command: ";
         std::cin >> command;
 
-        if (command == "EXIT")
+        if (command == "EXIT") //FROM replaceChoice
             exit = 1;
 
         else{
@@ -1206,7 +1401,7 @@ int main(){
 				//std::cout << "IMPORT - Imports an XML file into the program." << std::endl;
 				//std::cout << "EXPORT - Exports program contents into an XML file." << std::endl;
                 //std::cout << "DESTROY - (Dangerous) Deletes an entire list." << std::endl;
-                std::cout << std::endl << "WARNING: You will not be able to cancel an operation once it has begun." << std::endl;
+                std::cout << std::endl << "WARNING: You may not be able to cancel an operation once it has begun." << std::endl;
 
             }else if (command == "PRINT"){
 
@@ -1214,7 +1409,16 @@ int main(){
                 textList.printList();
 
             }else if (command == "FIND"){
-                findNode();
+				
+				std::cout << "Text ID to find: ";
+				std::cin >> command;
+				p_current = textList.findNode(command);
+
+				if (p_current == nullptr)
+					std::cout << "Not found." << std::endl;
+
+				else
+					loadEvent(p_current);
 
             }else if (command == "CREATE"){
 
