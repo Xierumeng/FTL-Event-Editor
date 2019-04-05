@@ -28,8 +28,8 @@
 /*
 // Program Notes
 //
-// CURRENT: Test the crap out of the event editor.
-// TODO   : Actually loading in an event to play through.
+// CURRENT: Add subclasses to Node to handle anything with "name" (event, eventList, [equipment], text, textList, crewMember id, ship, basically anything with an ID).
+// TODO   : Handle "[...]List" since they won't have names.
 */
 
 #include <iostream>
@@ -70,6 +70,7 @@ public:
     Node<T> *getNext(); //Returns next node
     Node<T> *getHead(); //Returns head list
 
+	void replaceID(std::string ID); //Replaces ID //THIS SHOULD ONLY BE USED FOR EVENT CHOICE SORTING
     virtual void replaceValue(T newValue); //Replaces contents
     void replaceNext(Node<T> *p_next); //Updates pointer to next node
     void replaceHead(Node<T> *p_head); //Updates pointer to list head
@@ -140,6 +141,11 @@ Node<T> *Node<T>::getNext(){
 template <typename T>
 Node<T> *Node<T>::getHead(){
     return p_listHead;
+}
+
+template <typename T>
+void Node<T>::replaceID(std::string ID){
+	id = ID;
 }
 
 template <typename T>
@@ -1090,7 +1096,7 @@ void Event::printSelf(){
 		std::cout << p_currentChoice->getID << ". " << p_currentChoice->getValue;
 }
 
-void Event::replaceValue(){ //TODO!!!!
+void Event::replaceValue(){
 
 	std::string command{""};
 	int numCom{0};
@@ -1279,9 +1285,14 @@ void Event::replaceChoice(){
 		}
 	}
 	
-	std::cout << "Replacing ID's with numbers in order..." << std::endl; //!!!!
-	for (Choice *p_currentChoice{p_choice->getHead()}; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext())
-		std::cout << p_currentChoice->getID << ". " << p_currentChoice->getValue;
+	std::cout << "Replacing ID's with numbers in order..." << std::endl;
+	
+	int i{0};
+	for (Choice *p_currentChoice{p_choice->getHead()}; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext()){
+		
+		i++;
+		p_currentChoice->replaceID(std::to_string(i));
+	}
 	
 	std::cout << "replaceChoice in Event class operation completed." << std::endl;
 }
