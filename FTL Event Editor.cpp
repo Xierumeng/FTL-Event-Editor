@@ -1,7 +1,7 @@
 /*
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.1.0 //FROM PROGRAM_VERSION
+// Version: 0.1.1 //FROM PROGRAM_VERSION
 // For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
@@ -37,17 +37,17 @@
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.1.0" //FROM Version
+#define PROGRAM_VERSION "0.1.1" //FROM Version
 #define MAX_CREW_PROP 4 //Crew types
 #define ZERONE "(0 for no, 1 for yes): " //Event, Choice
 #define TYPE "(-1 for direct string, 0 for id=, 1 for load=): " //Reference or direct
 #define CONFIRM "y for yes, otherwise no: " //y confirmation
 #define INVALID "Invalid input, operation aborted."
-#deinfe NOABORT "(WARNING: You cannot abort this operation once it has begun)" //Cannot abort action once started
-
+#define NOABORT "(WARNING: You cannot abort this operation once it has begun)" //Cannot abort action once started
 
 class Choice;
 class Event;
+class Ship;
 
 template <typename T>
 class Node;
@@ -55,468 +55,7 @@ template <typename T>
 class Linked_List;
 int main();
 
-//Data containers
-class Auto_Reward{
-public:
-
-    Auto_Reward();
-
-	std::string level;
-	std::string rewardType;
-};
-
-Auto_Reward::Auto_Reward():
-level{""},
-rewardType{""}
-{
-}
-
-class Item_Modify{ //TODO: Implement steal
-public:
-
-    Item_Modify();
-
-	int scrap[2]; //min, max
-	int fuel[2];
-	int missiles[2];
-	int drones[2];
-};
-
-Item_Modify::Item_Modify(){
-
-    for (int i{0}; i < 2; i++){
-
-		scrap[i] = 0;
-		fuel[i] = 0;
-		missiles[i] = 0;
-		drones[i] = 0;
-	}
-}
-
-class System_Damage{
-public:
-
-    System_Damage();
-
-	int amount;
-	std::string system;
-	std::string effect;
-};
-
-System_Damage::System_Damage():
-amount{0},
-system{""},
-effect{""}
-{
-}
-
-class System_Status{
-public:
-
-    System_Status();
-
-	std::string type;
-	std::string target;
-	std::string system;
-	unsigned int amount;
-};
-
-System_Status::System_Status():
-type{""},
-target{""},
-system{""},
-amount{0}
-{
-}
-
-class Crew_Boarder{
-public:
-
-    Crew_Boarder();
-
-	std::string classRace;
-	unsigned int num[2]; //Max must be below 9
-	bool breach;
-};
-
-Crew_Boarder::Crew_Boarder():
-classRace{""},
-breach{0}
-{
-    for (int i{0}; i < 2; i++)
-        num[i] = 0;
-}
-
-class Crew_Member{
-public:
-
-    Crew_Member();
-
-	int amount;
-	std::string skill; //all_skills, pilot, etc.
-	unsigned int level; //1 or 2
-	std::string classRace;
-	std::string id; //Force name
-
-	double proportion; //For Ship class crew proportion
-};
-
-Crew_Member::Crew_Member():
-amount{0},
-skill{""},
-level{0},
-classRace{""},
-id{""},
-proportion{0}
-{
-}
-
-class Surrender_Escape{
-public:
-
-    Surrender_Escape();
-
-	double chance;
-	int timer;
-	int num[2];
-};
-
-Surrender_Escape::Surrender_Escape():
-chance{0},
-timer{0}
-{
-    for (int i{0}; i < 2; i++)
-        num[i] = 0;
-}
-
-class Choice: public Node{ //T value is choice text
-public:
-
-    Choice(); //TODO
-    ~Choice();
-	
-	void printSelf(); //TODO
-	Event *getEvent(); //Gets the direct event
-	
-	void replaceValue();
-	void replaceEvent();
-	
-private:
-
-	//std::string choice;
-
-	//Tags
-	bool hidden; //Result hidden
-	bool blue;
-	std::string req;
-	unsigned int lvl;
-	unsigned int maxLvl;
-	unsigned int maxGroup;
-
-	//Contents
-	int textType; //FROM Event -1 for direct string, 0 for id=, 1 for load=
-	std::string textID;
-	
-	int eventType; //-1 for direct event, 0 for id=, 1 for load=
-	std::string eventID;
-    Event *p_event;
-};
-
-Choice::Choice(
-std::string ID,
-Choice *p_next,
-):
-
-Node(ID, p_next, nullptr):
-//choice{""},
-hidden{0},
-blue{0},
-req{"None"},
-lvl{0},
-maxLvl{0},
-maxGroup{0},
-textType{-1},
-textID{""},
-eventType{-1},
-eventID{""},
-p_event{nullptr}
-{
-}
-
-Choice::~Choice()
-{
-    delete p_event;
-    p_event = nullptr;
-}
-
-void Choice::printSelf(){
-	
-	std::cout << "Name ID: " << id << std::endl;
-	std::cout << "Choice text: " << contents << std::endl;
-	std::cout << "Results text: ";
-	
-	if (textType >= 0)
-		std::cout << "(Reference) ";
-	
-	std::cout << textID << std::endl;
-	
-	std::cout << std::endl;
-	
-	std::cout << "Results hidden: " << hidden << std::endl;
-	std::cout << "Blue text: " << blue << std::endl;
-	std::cout << "System required: " << req << std::endl;
-	std::cout << "Minimum level: " << lvl << std::endl;
-	std::cout << "Maximum level: " << maxLvl << std::endl;
-	std::cout << "Maximum group: " << maxGroup << std::endl;
-	
-	std::cout << std::endl;
-	
-	std::cout << "Event ID: ";
-	
-	if (eventType >= 0)
-		std::cout << "(Reference) " << eventID;
-	
-	else if (p_event != nullptr)
-		std::cout << "(Subordinate) " << p_event->getID();
-	
-	std::cout << std::endl;
-}
-
-void Choice::replaceValue(){
-	
-	std::string command{""};
-	
-	std::string choice{""};
-	std::string result{""};
-	int resultType{-1};
-	bool hide{0};
-	bool bloo{0};
-	std::string required{"None"};
-	int level{0};
-	int maxLevel{0};
-	int maxGroups{0};
-	
-	std::cout << "Editing: " << id << std::endl;
-	std::cout << "To cancel, give invalid input or decline at end." << std::endl;
-	
-	std::cout << std::endl;
-	
-	std::cout << "Choice text: ";
-	std::cin >> choice;
-	std::cout << "Results text type " << TYPE;
-	std::cin >> resultType;
-	
-	if (resultType < -1 || resultType > 1){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "Results text: ";
-	std::cin >> result;
-	
-	std::cout << "Results hidden " << ZERONE;
-	std::cin >> hide;
-	
-	if (hide < 0 || hide > 1){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "Blue text " << ZERONE;
-	std::cin >> bloo;
-	
-	if (bloo < 0 || bloo > 1){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "System required text: ";
-	std::cin >> required;
-	std::cout << "Minimum level (positive integer): "
-	std::cin >> level;
-	
-	if (level < 0){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "Maximum level (positive integer): ";
-	std::cin >> maxLevel;
-	
-	if (maxLevel < 0){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "Maximum group (positive integer): ";
-	std::cin >> maxGroups;
-	
-	if (maxGroups < 0){
-		
-		std::cout << INVALID << std::endl;
-		return;
-	}
-	
-	std::cout << "Confirm changes? " << CONFIRM;
-	std::cin command;
-	
-	if (command == "y"){
-	
-		contents = choice;
-		textID = result;
-		textType = resultType;
-		hidden = hide;
-		blue = bloo;
-		req = required;
-		lvl = level;
-		maxLvl = maxLevel;
-		maxGroup = maxGroups;
-		
-		std::cout << "Done." << std::endl;
-		
-	}else
-		std::cout << "Operation aborted." std::endl;
-	
-	std::cout << std::endl;
-	
-	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
-	std::cin >> command;
-	
-	if (command == "y")
-		replaceEvent();
-	
-	std::cout << std::endl;
-	std::cout << "replaceValue in Choice class operation completed." << std::endl;
-}
-
-void Choice::replaceEvent(){
-	
-	std::cout << "
-	
-}
-
-class Event{
-public:
-
-	Event();
-	~Event();
-
-	bool Unique;
-
-	//Event text
-	int textType; //FROM Choice -1 for direct string, 0 for id=, 1 for load=
-	std::string textID;
-
-	//Beacon appearance only
-	bool distress;
-	bool repair;
-	bool store;
-	std::string environment;
-	std::string target;
-
-	//Single-line things
-	int modifyPursuit;
-	bool revealMap;
-	bool secretSector;
-	std::string unlockShip;
-	std::string fleet; //Background ships
-
-	//Resources
-	Auto_Reward reward;
-	Item_Modify items;
-	std::string augment;
-	std::string drone;
-	std::string weapon;
-	std::string removeEquip;
-
-	//System
-	System_Damage damage;
-	System_Status status;
-
-	//Crew
-	Crew_Boarder boarders;
-	Crew_Member crew;
-
-	//Ship
-	std::string shipID;
-	bool hostile;
-
-	std::string questID;
-
-    Linked_List<Choice> *p_choices;
-
-	bool returnEvent; //Ending the event early with <event/>
-};
-
-Event::Event():
-Unique{0},
-textType{-1},
-textID{""},
-
-distress{0},
-repair{0},
-store{0},
-environment{""},
-target{""},
-
-modifyPursuit{0},
-revealMap{0},
-secretSector{0},
-unlockShip{""},
-fleet{""},
-
-augment{""},
-drone{""},
-weapon{""},
-removeEquip{""},
-
-shipID{""},
-hostile{0},
-questID{""},
-
-p_choices{nullptr},
-returnEvent{0}
-{
-}
-
-Event::~Event()
-{
-    delete p_choices;
-    p_choices = nullptr;
-}
-
-class Ship{
-public:
-
-    Ship();
-    ~Ship();
-	
-protected:
-
-	bool autoB; //auto_blueprint?
-	std::string blueprint;
-
-	//Surrender_Escape ; TODO
-
-	Event destroyed;
-	Event deadCrew;
-	Event surrender;
-	Event escape;
-	Event gotaway;
-
-	Crew_Member crew[MAX_CREW_PROP];
-};
-
-Ship::Ship():
-autoB{0},
-blueprint{""}
-{
-}
+//Class templates
 
 template <typename T>
 class Node{
@@ -535,7 +74,7 @@ public:
     void replaceNext(Node<T> *p_next); //Updates pointer to next node
     void replaceHead(Node<T> *p_head); //Updates pointer to list head
 
-private:
+protected:
 
     std::string id; //Name of the node
     T contents; //Contents of the node
@@ -569,18 +108,18 @@ Node<T>::~Node() //FROM ~Linked_List()
 
 template <typename T>
 void Node<T>::printSelf(){
-	
+
 	std::cout << "Name ID: " << id << std::endl;
     std::cout << "Contents: " << contents << std::endl;
 	std::cout << "Subnodes:" << std::endl;
 
     for(Node<T> *p_subNode{p_listHead}; p_subNode != nullptr; p_subNode = p_subNode->getNext()){
         std::cout << " - " <<p_subNode->getID() << std::endl;
-		
+
         //if (p_subNode == nullptr)
         //    std::cout << std::endl;
     }
-	
+
 }
 
 template <typename T>
@@ -879,6 +418,757 @@ int Linked_List<T>::deleteNode(std::string deleteID){
     }
 }
 
+/*TODO
+//Data containers
+class Auto_Reward{
+public:
+
+    Auto_Reward();
+    void printReward(){
+        std::cout << "Reward level: " << level << std::endl;
+        std::cout << "Reward type: " << rewardType << std::endl;
+    }
+
+	std::string level;
+	std::string rewardType;
+};
+
+Auto_Reward::Auto_Reward():
+level{""},
+rewardType{""}
+{
+}
+
+class Item_Modify{ //TODO: Implement steal
+public:
+
+    Item_Modify();
+    void printItem(){
+        std::cout << "Item modification:" << std::endl;
+        std::cout << " -Scrap min: " << scrap[0] << std::endl;
+        std::cout << " -Scrap max: " << scrap[1] << std::endl;
+        std::cout << " -Fuel min: " << fuel[0] << std::endl;
+        std::cout << " -Fuel max: " << fuel[1] << std::endl;
+        std::cout << " -Missiles min: " << missiles[0] << std::endl;
+        std::cout << " -Missiles max: " << missiles[1] << std::endl;
+        std::cout << " -Drones min: " << drones[0] << std::endl;
+        std::cout << " -Drones max: " << drones[1] << std::endl;
+    }
+
+	int scrap[2]; //min, max
+	int fuel[2];
+	int missiles[2];
+	int drones[2];
+};
+
+Item_Modify::Item_Modify(){
+
+    for (int i{0}; i < 2; i++){
+
+		scrap[i] = 0;
+		fuel[i] = 0;
+		missiles[i] = 0;
+		drones[i] = 0;
+	}
+}
+
+class System_Damage{
+public:
+
+    System_Damage();
+    void printDamage(){
+        std::cout << "Damage amount: " << amount << std::endl;
+        std::cout << "Damaged system: " << system << std::endl;
+        std::cout << "Damage effect: " << effect << std::endl;
+    }
+
+	int amount;
+	std::string system;
+	std::string effect;
+};
+
+System_Damage::System_Damage():
+amount{0},
+system{""},
+effect{""}
+{
+}
+
+class System_Status{
+public:
+
+    System_Status();
+    void printStatus(){
+        std::cout << "Status type: " << type << std::endl;
+        std::cout << "Status target ship: " << target << std::endl;
+        std::cout << "Status system: " << system << std::endl;
+        std::cout << "Status amount: " << amount << std::endl;
+    }
+
+	std::string type;
+	std::string target;
+	std::string system;
+	unsigned int amount;
+};
+
+System_Status::System_Status():
+type{""},
+target{""},
+system{""},
+amount{0}
+{
+}
+
+class Crew_Boarder{
+public:
+
+    Crew_Boarder();
+    void printBoarder(){
+        std::cout << "Boarder race: " << classRace << std::endl;
+        std::cout << "Minimum: " << num[0] << std::endl;
+        std::cout << "Maximum: " << num[1] << std::endl;
+        std::cout << "Boarder breach: " << breach << std::endl;
+    }
+
+	std::string classRace;
+	unsigned int num[2]; //Max must be below 9
+	bool breach;
+};
+
+Crew_Boarder::Crew_Boarder():
+classRace{""},
+breach{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
+
+class Crew_Member{
+public:
+
+    Crew_Member();
+    void printCrew(){
+        std::cout << "Crew number: " << amount << std::endl;
+        std::cout << "Crew skill: " << skill << std::endl;
+        std::cout << "Crew skill level: " << level << std::endl;
+        std::cout << "Crew name ID: " << id << std::endl;
+    }
+
+	int amount;
+	std::string skill; //all_skills, pilot, etc.
+	unsigned int level; //1 or 2
+	std::string classRace;
+	std::string id; //Force name
+
+	double proportion; //For Ship class crew proportion
+};
+
+Crew_Member::Crew_Member():
+amount{0},
+skill{""},
+level{0},
+classRace{""},
+id{"None"},
+proportion{0}
+{
+}
+
+class Surrender_Escape{
+public:
+
+    Surrender_Escape();
+    void print(){
+        std::cout << "Enemy Chance: " << chance << std::endl;
+        std::cout << "Enemy Timer: " << timer << std::endl;
+        std::cout << "Timer min: " << num[0] << std::endl;
+        std::cout << "TImer max: " << num[1] << std::endl;
+    }
+
+	double chance;
+	int timer;
+	int num[2];
+};
+
+Surrender_Escape::Surrender_Escape():
+chance{0},
+timer{0}
+{
+    for (int i{0}; i < 2; i++)
+        num[i] = 0;
+}
+*/
+class Choice: public Node<std::string>{ //T value is choice text
+public:
+
+    Choice(std::string ID, Choice *p_next);
+    ~Choice();
+
+	void printSelf(); //TODO
+	/*TODO Event *getEvent(); //Gets the direct event
+
+	void replaceValue();
+	void replaceEvent();*/
+
+protected:/*TODO
+
+	//std::string choice;
+
+	//Tags
+	bool hidden; //Result hidden
+	bool blue;
+	std::string req;
+	unsigned int lvl;
+	unsigned int maxLvl;
+	unsigned int maxGroup;
+
+	//Contents
+	int textType; //FROM Event -1 for direct string, 0 for id=, 1 for load=
+	std::string textID;
+
+	int eventType; //-1 for direct event, 0 for id=, 1 for load=
+	std::string eventID;
+    Event *p_event;*/
+    int choiceData;
+};
+
+Choice::Choice(std::string ID, Choice *p_next):
+Node<std::string>(ID, p_next, nullptr),
+//choice{""},
+/*TODO hidden{0},
+blue{0},
+req{"None"},
+lvl{0},
+maxLvl{0},
+maxGroup{0},
+textType{-1},
+textID{""},
+eventType{-1},
+eventID{""},
+p_event{nullptr}*/
+choiceData{19}
+{
+}
+
+Choice::~Choice()
+{
+    /*TODO delete p_event;
+    p_event = nullptr;*/
+}
+
+void Choice::printSelf(){
+    std::cout << "TEST " << choiceData << std::endl;
+
+    /*TODO
+	std::cout << "Name ID: " << id << std::endl;
+	std::cout << "Choice text: " << contents << std::endl;
+	std::cout << "Results text: ";
+
+	if (textType >= 0)
+		std::cout << "(Reference) ";
+
+	std::cout << textID << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Results hidden: " << hidden << std::endl;
+	std::cout << "Blue text: " << blue << std::endl;
+	std::cout << "System required: " << req << std::endl;
+	std::cout << "Minimum level: " << lvl << std::endl;
+	std::cout << "Maximum level: " << maxLvl << std::endl;
+	std::cout << "Maximum group: " << maxGroup << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Event ID: ";
+
+	if (eventType >= 0)
+		std::cout << "(Reference) " << eventID;
+
+	else if (p_event != nullptr)
+		std::cout << "(Subordinate) " << p_event->getID();
+
+	std::cout << std::endl;*/
+}
+/*TODO
+void Choice::replaceValue(){
+
+	std::string command{""};
+
+	std::string choice{""};
+	std::string result{""};
+	int resultType{-1};
+	bool hide{0};
+	bool bloo{0};
+	std::string required{"None"};
+	int level{0};
+	int maxLevel{0};
+	int maxGroups{0};
+
+	std::cout << "Editing: " << id << std::endl;
+	std::cout << "To cancel, give invalid input or decline at end." << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Choice text: ";
+	std::cin >> choice;
+	std::cout << "Results text type " << TYPE;
+	std::cin >> resultType;
+
+	if (resultType < -1 || resultType > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Results text: ";
+	std::cin >> result;
+
+	std::cout << "Results hidden " << ZERONE;
+	std::cin >> hide;
+
+	if (hide < 0 || hide > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Blue text " << ZERONE;
+	std::cin >> bloo;
+
+	if (bloo < 0 || bloo > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "System required text: ";
+	std::cin >> required;
+	std::cout << "Minimum level (positive integer): "
+	std::cin >> level;
+
+	if (level < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Maximum level (positive integer): ";
+	std::cin >> maxLevel;
+
+	if (maxLevel < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Maximum group (positive integer): ";
+	std::cin >> maxGroups;
+
+	if (maxGroups < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Confirm changes? " << CONFIRM;
+	std::cin command;
+
+	if (command == "y"){
+
+		contents = choice;
+		textID = result;
+		textType = resultType;
+		hidden = hide;
+		blue = bloo;
+		req = required;
+		lvl = level;
+		maxLvl = maxLevel;
+		maxGroup = maxGroups;
+
+		std::cout << "Done." << std::endl;
+
+	}else
+		std::cout << "Operation aborted." std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
+	std::cin >> command;
+
+	if (command == "y")
+		replaceEvent();
+
+	std::cout << std::endl;
+	std::cout << "replaceValue in Choice class operation completed." << std::endl;
+}
+
+void Choice::replaceEvent(){
+
+	std::cout << "Editing: " << id << std::endl;
+	std::cout << "To cancel, give invalid input. Otherwise, the event will be erased." << std::endl;
+
+	std::string command{""};
+
+	std::cout << "Choice event type " << TYPE;
+	std::cin >> command;
+
+	if (command < -1 || command > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	eventType = command;
+	delete p_event;
+    p_event = nullptr;
+
+	if (eventType == -1){
+        p_event = new Event();
+
+	}else{
+
+        std::cout << "event ID: ";
+        std::cin >> eventID;
+	}
+	std::cout << "replaceEvent in Choice class operation completed." << std::endl;
+}*/
+
+class Event: public Node<bool>{ //T value is unique tag
+public:
+
+	Event(std::string ID, Event *p_next);
+	~Event();
+
+	void printSelf(); //TODO
+
+	/*TODO void replaceValue();
+	void replaceChoice();*/
+
+protected:
+
+    int eventData;
+
+	//bool Unique;
+    /*TODO
+	//Event text
+	int textType; //FROM Choice -1 for direct string, 0 for id=, 1 for load=
+	std::string textID;
+
+	//Beacon appearance only
+	bool distress;
+	bool repair;
+	bool store;
+	std::string environment;
+	std::string target;
+
+	//Single-line things
+	int modifyPursuit;
+	bool revealMap;
+	bool secretSector;
+	std::string unlockShip;
+	std::string fleet; //Background ships
+
+	//Resources
+	Auto_Reward reward;
+	Item_Modify items;
+	std::string augment;
+	std::string drone;
+	std::string weapon;
+	std::string removeEquip;
+
+	//System
+	System_Damage damage;
+	System_Status status;
+
+	//Crew
+	Crew_Boarder boarders;
+	Crew_Member crew;
+
+	//Ship
+	std::string shipID;
+	bool hostile;
+
+    Linked_List<std::string> *p_choices;
+
+    std::string questID;
+	bool returnEvent; //Ending the event early with <event/>*/
+};
+
+Event::Event(std::string ID, Event *p_next):
+Node<bool>(ID, p_next, nullptr),
+eventData{42}
+//Unique{0},
+/*TODO textType{-1},
+textID{""},
+
+distress{0},
+repair{0},
+store{0},
+environment{""},
+target{""},
+
+modifyPursuit{0},
+revealMap{0},
+secretSector{0},
+unlockShip{""},
+fleet{""},
+
+augment{""},
+drone{""},
+weapon{""},
+removeEquip{""},
+
+shipID{""},
+hostile{0},
+
+p_choices{new Linked_List<std::string>},
+questID{""},
+returnEvent{0}*/
+{
+}
+
+Event::~Event()
+{
+    /*TODO delete p_choices;
+    p_choices = nullptr;*/
+}
+
+void Event::printSelf(){
+    std::cout << "TEST " << eventData << std::endl;
+
+    /*TODO
+    std::cout << "Name ID: " << id << std::endl;
+	std::cout << "Unique tag: " << contents << std::endl;
+	std::cout << "Event text: ";
+
+	if (textType >= 0)
+		std::cout << "(Reference) ";
+
+	std::cout << textID << std::endl;
+
+	std::cout << "Map distress: " << distress << std::endl;
+	std::cout << "Map repair: " << repair << std::endl;
+	std::cout << "Map store: " << store << std::endl;
+	std::cout << "Environmental hazard: " << environment << std::endl;
+	std::cout << "PDS target: " << target << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Fleet pursuit modifier: " << modifyPursuit << std::endl;
+	std::cout << "Reveal sector: " << revealMap << std::endl;
+	std::cout << "Secret sector: " << secretSector << std::endl;
+	std::cout << "Unlock ship: " << unlockShip << std::endl;
+	std::cout << "Background ships: " << fleet << std::endl;
+
+	//Resources
+    reward.printReward();
+    std::cout << std::endl;
+	items.printItem();
+	std::cout << std::endl;
+
+	std::cout << "New augment: " << augment << std::endl;
+	std::cout << "New drone: " << drone << std::endl;
+	std::cout << "New weapon: " << weapon<< std::endl;
+	std::cout << "Remove equipment: " << removeEquip << std::endl;
+
+	std::cout << std::endl;
+
+	//System
+	damage.printDamage();
+	std::cout << std::endl;
+	status.printStatus();
+	std::cout << std::endl;
+
+	//Crew
+	boarders.printBoarder();
+	std::cout << std::endl;
+	crew.printCrew();
+	std::cout << std::endl;
+
+	//Ship
+	std::cout << "Ship: " << shipID << std::endl;
+	std::cout << "Hostile: " << hostile << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "Quest: " << questID << std::endl;
+	std::cout << "Forcibly end event: " << returnEvent << std::endl;
+
+    p_choices->printList();*/
+}
+/*TODO
+void Event::replaceValue(){ //TODO!!!!
+
+	std::string command{""};
+
+	std::string choice{""};
+	std::string result{""};
+	int resultType{-1};
+	bool hide{0};
+	bool bloo{0};
+	std::string required{"None"};
+	int level{0};
+	int maxLevel{0};
+	int maxGroups{0};
+
+	std::cout << "Editing: " << id << std::endl;
+	std::cout << "To cancel, give invalid input or decline at end." << std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Choice text: ";
+	std::cin >> choice;
+	std::cout << "Results text type " << TYPE;
+	std::cin >> resultType;
+
+	if (resultType < -1 || resultType > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Results text: ";
+	std::cin >> result;
+
+	std::cout << "Results hidden " << ZERONE;
+	std::cin >> hide;
+
+	if (hide < 0 || hide > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Blue text " << ZERONE;
+	std::cin >> bloo;
+
+	if (bloo < 0 || bloo > 1){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "System required text: ";
+	std::cin >> required;
+	std::cout << "Minimum level (positive integer): "
+	std::cin >> level;
+
+	if (level < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Maximum level (positive integer): ";
+	std::cin >> maxLevel;
+
+	if (maxLevel < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Maximum group (positive integer): ";
+	std::cin >> maxGroups;
+
+	if (maxGroups < 0){
+
+		std::cout << INVALID << std::endl;
+		return;
+	}
+
+	std::cout << "Confirm changes? " << CONFIRM;
+	std::cin command;
+
+	if (command == "y"){
+
+		contents = choice;
+		textID = result;
+		textType = resultType;
+		hidden = hide;
+		blue = bloo;
+		req = required;
+		lvl = level;
+		maxLvl = maxLevel;
+		maxGroup = maxGroups;
+
+		std::cout << "Done." << std::endl;
+
+	}else
+		std::cout << "Operation aborted." std::endl;
+
+	std::cout << std::endl;
+
+	std::cout << "Edit event ID? " << NOABORT << " " << CONFIRM;
+	std::cin >> command;
+
+	if (command == "y")
+		replaceEvent();
+
+	std::cout << std::endl;
+	std::cout << "replaceValue in Choice class operation completed." << std::endl;
+}
+*/
+class Ship: public Node<bool>{ //T value is autoB
+public:
+
+    Ship(std::string ID, Event *p_next = nullptr);
+
+protected:
+
+	//bool autoB; //auto_blueprint?
+	std::string blueprint;
+
+	//Surrender_Escape ; TODO
+
+	/*TODO Event destroyed;
+	Event deadCrew;
+	Event surrender;
+	Event escape;
+	Event gotaway;
+
+	Crew_Member crew[MAX_CREW_PROP];*/
+};
+
+Ship::Ship(std::string ID, Event *p_next):
+Node<bool>(ID, p_next, nullptr),
+//autoB{0},
+blueprint{""}
+{
+}
+
+//Global
+
+void findNode(){
+
+    std::cout << "Text ID to find: ";
+    std::cin >> command;
+    p_current = textList.findNode(command);
+
+    if (p_current == nullptr)
+        std::cout << "Not found." << std::endl;
+
+    else{
+
+        Event<bool> *p_event{p_current};
+        Choice<std::string> *p_choice{nullptr};
+        bool event{0};
+
+        std::cout << std::endl;
+
+        while (1){
+
+            p_event->printSelf();
+            std::cout << std::endl;
+            std::cout << "Enter a number, or HELP: " << std::endl;
+
+        }
+        textList.printNode(p_current); //Finds the node, then prints its ID and contents
+
+    }
+
+
+}
+
 int main(){
 
     Linked_List<std::string> textList; //TODO: Make this a pointer?
@@ -894,6 +1184,7 @@ int main(){
 
         command = "";
         parent = "";
+        p_current = nullptr;
 
         std::cout << std::endl << "Waiting for user command: ";
         std::cin >> command;
@@ -923,20 +1214,7 @@ int main(){
                 textList.printList();
 
             }else if (command == "FIND"){
-
-                std::cout << "Text ID to find: ";
-                std::cin >> command;
-                p_current = textList.findNode(command);
-
-                if (p_current == nullptr)
-                    std::cout << "Not found." << std::endl;
-
-                else{
-
-                    std::cout << std::endl;
-                    textList.printNode(p_current); //Finds the node, then prints its ID and contents
-                    p_current = nullptr;
-                }
+                findNode();
 
             }else if (command == "CREATE"){
 
