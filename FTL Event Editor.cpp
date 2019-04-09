@@ -1,35 +1,43 @@
 /*
+// ------------
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
 // Version: 0.1.1 //FROM PROGRAM_VERSION
+// Patch:   5
 // For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
-// Contact: xierumeng <at] hotmail (dot} com
+// Contact: https://github.com/Xierumeng/FTL-Event-Editor
 // License: Copyright © 2019
 // Notes:   For FTL Faster-than-Light. Use at your own risk; no liability is held to the author of this program.
+// ------------
 */
 
 /*
+// ------------
 // Program Conventions
 //
 // TODO: Things that will need to be modified later
 // !!!!: Urgency
-// FROM: Matches code(-ish) from other sections
+// FROM: Matches code (kinda) from other sections
 // TEST: For testing
+// TEMP: Needs to be changed after testing complete
 //
 // id  : Internal identification
 // ID  : External identification
 //
 // One line separations between categories. Exceptions: One liners, bracket-only lines
 // Classes: Constructor/destructor, read functions, write functions
+// ------------
 */
 
 /*
+// ------------
 // Program Notes
 //
-// CURRENT: Add subclasses to Node to handle anything with "name" (event, eventList, [equipment], text, textList, crewMember id, ship, basically anything with an ID).
-// TODO   : Handle "[...]List" since they won't have names.
+// CURRENT: Test global functions, complete class Ship and associated global functions.
+// TODO   : Possibly get templates into a header file.
+// ------------
 */
 
 #include <iostream>
@@ -55,7 +63,11 @@ template <typename T>
 class Linked_List;
 int main();
 
-//Class templates
+/*
+// ------------
+// Class Templates //TODO
+// ------------
+*/
 
 template <typename T>
 class Node{
@@ -270,7 +282,8 @@ Node<T> *Linked_List<T>::findLinearNode(std::string findID){
     Node<T> *p_currentNode{p_listHead};
     int unMatch{1};
 
-    while(p_currentNode != nullptr && unMatch > 0){ //Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
+    while(p_currentNode != nullptr && unMatch > 0){
+		//Start with list head then increment through matches or passes match point FROM: createNode, deleteNode
 
         unMatch = findID.compare(p_currentNode->getID());
 
@@ -430,7 +443,12 @@ int Linked_List<T>::deleteNode(std::string deleteID){
     }
 }
 
-//Data containers
+/*
+// ------------
+// Public Data Classes
+// ------------
+*/
+
 class Auto_Reward{
 public:
 
@@ -702,7 +720,13 @@ timer{0}
         num[i] = 0;
 }
 
-class Event: public Node<bool>{ //T value is unique tag
+/*
+// ------------
+// Event, Choice, Ship - Classes
+// ------------
+*/
+
+class Event: public Node<bool>{ //T value is tag unique boolean
 public:
 
 	Event(std::string ID, Event *p_next);
@@ -1066,7 +1090,7 @@ void Event::replaceChoice(){
 	std::cout << "replaceChoice in Event class operation completed." << std::endl;
 }
 
-class Choice: public Node<std::string>{ //T value is choice text
+class Choice: public Node<std::string>{ //T value is choice string
 public:
 
     Choice(std::string ID, Choice *p_next);
@@ -1305,7 +1329,7 @@ void Choice::replaceEvent(){
 	std::cout << "replaceEvent in Choice class operation completed." << std::endl;
 }
 
-class Ship: public Node<bool>{ //T value is autoB
+class Ship: public Node<bool>{ //T value is autoB boolean //TODO
 public:
 
     Ship(std::string ID, Event *p_next = nullptr);
@@ -1333,9 +1357,13 @@ blueprint{""}
 {
 }
 
-//Global
+/*
+// ------------
+// Global Functions
+// ------------
+*/
 
-void loadEvent(Event *p_event){ //!!!!
+void findEvent(Event *p_event){ //!!!!
 
 	int command{1};
     Choice *p_choice{nullptr};
@@ -1368,7 +1396,7 @@ void loadEvent(Event *p_event){ //!!!!
 
 			p_choice->printSelf();
 			std::cout << "Enter an integer (0 to edit choice and event type, 1 to continue to event, invalid to return to menu)" << std::endl;
-			std::cout << "Note: If the event is referenced you will be returned to menu. If you want edit the referenced event do it from there." << std::endl;
+			std::cout << "Note: If the event is referenced you will be returned to menu. If you want edit the referenced event use FIND and EDIT from the menu." << std::endl;
 			std::cin >> command;
 			std::cout << std::endl;
 
@@ -1383,141 +1411,276 @@ void loadEvent(Event *p_event){ //!!!!
 	}
 }
 
+void helpText(){
+	
+	std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
+    std::cout << "BACK   - Exits the program." << std::endl;
+    std::cout << "PRINT  - Prints the current list of items." << std::endl;
+    std::cout << "FIND   - Searches for the item specificed and prints its contents. For events, allows you to edit the contents as well." << std::endl;
+    std::cout << "CREATE - Creates a new item with the specificed name without duplicates." << std::endl;
+    std::cout << "EDIT   - Replaces the contents of the item with the specified input. For events, only the unique tag will be changed, use FIND instead." << std::endl;
+    std::cout << "DELETE - Deletes the specified item and its contents. This is irreversible." << std::endl;
+	//std::cout << "IMPORT - Imports an XML file into the program." << std::endl;
+	//std::cout << "EXPORT - Exports program contents into an XML file." << std::endl;
+    std::cout << std::endl << "Warning: You might not be able to cancel an operation once it has begun." << std::endl;
+}
+
+void eventMenu(Linked_List<bool> *eventList){
+	
+	Event *p_current{nullptr}; //Keep for load functions
+	
+	bool back{0}
+	std::string command{""};
+    std::string parent{""};
+	
+	while(!back){
+		
+		std::cout << std::endl << "In event list menu (enter HELP for a list of valid commands): ";
+        std::cin >> command;
+
+        if (command == "BACK") //FROM replaceChoice
+            back = 1;
+			
+		else if (command == "HELP")
+			helpText();
+		
+		else if (command == "PRINT")
+			eventList->printList();
+		
+		else if (command == "FIND"){
+			
+			std::cout << "Event ID to find: ";
+			std::cin >> command;
+			p_current = eventList->findNode(command);
+
+			if (p_current == nullptr)
+				std::cout << "Not found." << std::endl;
+
+			else
+				findEvent(p_event);
+			
+		}else if (command == "CREATE"){
+
+            std::cout << "New event ID name: ";
+            std::cin >> command;
+
+            if (eventList->findNode(command) != nullptr)
+                std::cout << "An ID with this name already exists." << std::endl;
+
+            else{
+
+                if (!eventList->emptyList()){
+
+                    std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
+                    std::cin >> parent;
+                }
+
+                if (eventList->findNode(parent) == nullptr)
+                    parent = "";
+
+                if (eventList->createNode(command, parent) == 1){
+
+                    std::cout << command << " created successfully";
+
+                    if (parent != "")
+                        std::cout << " under " << parent;
+
+                    std::cout << "." << std::endl;
+
+                }else
+                    std::cout << "ERROR: Invalid return " << eventList->createNode(command, parent) << " on createNode." << std::endl;
+            }
+
+        }else if (command == "EDIT"){
+
+            std::cout << "Event ID to modify: ";
+            std::cin >> command;
+            p_current = eventList->findNode(command);
+
+            if (p_current == nullptr)
+                std::cout << "Not found." << std::endl;
+
+            else{
+
+                std::cout << "Contents of text ID replacement text: ";
+                std::cin >> command;
+                eventList->modifyNode(p_current, command);
+                p_current = nullptr;
+                std::cout << command << " replaced successfully." << std::endl;
+            }
+
+        }else if (command == "DELETE"){
+
+            std::cout << "Text ID to delete: ";
+            std::cin >> command;
+
+            if (eventList->findNode(command) == nullptr)
+                std::cout << "Not found." << std::endl;
+
+            else{
+
+                if (eventList->deleteNode(command))
+                    std::cout << command << " successfully deleted." << std::endl;
+
+                else
+                    std::cout << "ERROR: Invalid return 0 on deleteNode." << std::endl;
+                }
+
+        }else
+            std::cout << "Invalid command, type HELP for help." << std::endl;
+	}
+}
+
+//void shipMenu(Linked_List<bool> *shipList); //TODO
+
+void textMenu(Linked_List<std::string> *textList){ //FROM [...]Menu //TODO: Possibly add templated functions?
+	
+	Node<std::string> *p_current{nullptr}; //Keep for load functions
+	
+	bool back{0}
+	std::string command{""};
+    std::string parent{""};
+	
+	while(!back){
+		
+		std::cout << std::endl << "In text list menu (enter HELP for a list of valid commands): ";
+        std::cin >> command;
+
+        if (command == "BACK") //FROM replaceChoice
+            back = 1;
+			
+		else if (command == "HELP")
+			helpText();
+		
+		else if (command == "PRINT")
+			textList->printList();
+		
+		else if (command == "FIND"){
+			
+			std::cout << "Text ID to find: ";
+			std::cin >> command;
+			p_current = textList->findNode(command);
+
+			if (p_current == nullptr)
+				std::cout << "Not found." << std::endl;
+
+			else{
+				
+				std::cout << std::endl;
+                textList->printNode(p_current); //Finds the node, then prints its ID and contents
+				p_current = nullptr;
+			}
+			
+		}else if (command == "CREATE"){
+
+            std::cout << "New text ID name: ";
+            std::cin >> command;
+
+            if (textList->findNode(command) != nullptr)
+                std::cout << "An ID with this name already exists." << std::endl;
+
+            else{
+
+                if (!textList->emptyList()){
+
+                    std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
+                    std::cin >> parent;
+                }
+
+                if (textList->findNode(parent) == nullptr)
+                    parent = "";
+
+                if (textList->createNode(command, parent) == 1){
+
+                    std::cout << command << " created successfully";
+
+                    if (parent != "")
+                        std::cout << " under " << parent;
+
+                    std::cout << "." << std::endl;
+
+                }else
+                    std::cout << "ERROR: Invalid return " << textList->createNode(command, parent) << " on createNode." << std::endl;
+            }
+
+        }else if (command == "EDIT"){
+
+            std::cout << "Text ID to modify: ";
+            std::cin >> command;
+            p_current = textList->findNode(command);
+
+            if (p_current == nullptr)
+                std::cout << "Not found." << std::endl;
+
+            else{
+
+                std::cout << "Contents of text ID replacement text: ";
+                std::cin >> command;
+                textList->modifyNode(p_current, command);
+                p_current = nullptr;
+                std::cout << command << " replaced successfully." << std::endl;
+            }
+
+        }else if (command == "DELETE"){
+
+            std::cout << "Text ID to delete: ";
+            std::cin >> command;
+
+            if (textList->findNode(command) == nullptr)
+                std::cout << "Not found." << std::endl;
+
+            else{
+
+                if (textList->deleteNode(command))
+                    std::cout << command << " successfully deleted." << std::endl;
+
+                else
+                    std::cout << "ERROR: Invalid return 0 on deleteNode." << std::endl;
+                }
+
+        }else
+            std::cout << "Invalid command, type HELP for help." << std::endl;
+	}
+}
+
+
 int main(){
 
-    Linked_List<std::string> textList; //TODO: Make this a pointer?
+	Linked_List<std::string> textList;
+	Linked_List<bool> shipList;
+	Linked_List<bool> eventList;
+	
     Node<std::string> *p_current{nullptr}; //Keep for load functions
+	
     bool exit{0};
     std::string command{""};
     std::string parent{""};
     //std::string findID{""};
 
     std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
+	std::cout << "Disclaimer: This is Xierumeng's program and is extremely buggy. Xierumeng is not liable for any losses of data due to bugs or crashes from you using this. If you do encounter such problems, please open an issue on Github so Xierumeng can fix it." << std::endl;
 
-    do{
-
-        command = "";
-        parent = "";
-        p_current = nullptr;
-
-        std::cout << std::endl << "Waiting for user command: ";
-        std::cin >> command;
-
-        if (command == "EXIT") //FROM replaceChoice
+    while(!exit){ //FROM replaceChoice
+		
+		std::cout << "Please choose a list to edit (valid choices include TEXT, SHIP, EVENT, and EXIT to quit the program): ";
+		std::cin >> command;
+		
+		if (command == "EXIT")
             exit = 1;
-
-        else{
-
-            if (command == "HELP"){
-
-                std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
-                std::cout << "EXIT   - Exits the program." << std::endl;
-                std::cout << "PRINT  - Prints the current list of nodes." << std::endl;
-                std::cout << "FIND   - Searches for the node specificed and prints its contents." << std::endl;
-                std::cout << "CREATE - Creates a new node with the specificed name without duplicates." << std::endl;
-                std::cout << "EDIT   - Replaces the contents of the node with the specified input." << std::endl;
-                std::cout << "DELETE - Deletes the specified node and its sub-nodes." << std::endl;
-				//std::cout << "IMPORT - Imports an XML file into the program." << std::endl;
-				//std::cout << "EXPORT - Exports program contents into an XML file." << std::endl;
-                //std::cout << "DESTROY - (Dangerous) Deletes an entire list." << std::endl;
-                std::cout << std::endl << "WARNING: You may not be able to cancel an operation once it has begun." << std::endl;
-
-            }else if (command == "PRINT"){
-
-                std::cout << "Printing:" << std::endl << std::endl;
-                textList.printList();
-
-            }else if (command == "FIND"){
-
-				std::cout << "Text ID to find: ";
-				std::cin >> command;
-				p_current = textList.findNode(command);
-
-				if (p_current == nullptr)
-					std::cout << "Not found." << std::endl;
-
-				else
-					loadEvent(p_current);
-
-            }else if (command == "CREATE"){
-
-                std::cout << "New ID name: ";
-                std::cin >> command;
-
-                if (textList.findNode(command) != nullptr)
-                    std::cout << "An ID with this name already exists." << std::endl;
-
-                else{
-
-                    if (!textList.emptyList()){
-
-                        std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
-                        std::cin >> parent;
-                    }
-
-                    if (textList.findNode(parent) == nullptr)
-                        parent = "";
-
-                    if (textList.createNode(command, parent) == 1){
-
-                        std::cout << command << " created successfully";
-
-                        if (parent != "")
-                            std::cout << " under " << parent;
-
-                        std::cout << "." << std::endl;
-
-                    }else
-                        std::cout << "ERROR: Invalid return " << textList.createNode(command, parent) << " on createNode." << std::endl;
-                }
-
-            }else if (command == "EDIT"){
-
-                std::cout << "Text ID to modify: ";
-                std::cin >> command;
-                p_current = textList.findNode(command);
-
-                if (p_current == nullptr)
-                    std::cout << "Not found." << std::endl;
-
-                else{
-
-                    std::cout << "Contents of text ID replacement text: ";
-                    std::cin >> command;
-                    textList.modifyNode(p_current, command);
-                    p_current = nullptr;
-                    std::cout << command << " replaced successfully." << std::endl;
-                }
-
-            }else if (command == "DELETE"){
-
-                std::cout << "Text ID to delete: ";
-                std::cin >> command;
-
-                if (textList.findNode(command) == nullptr)
-                    std::cout << "Not found." << std::endl;
-
-                else{
-
-                    if (textList.deleteNode(command))
-                        std::cout << command << " successfully deleted." << std::endl;
-
-                    else
-                        std::cout << "ERROR: Invalid return on deleteNode." << std::endl;
-                }
-
-            }else
-                std::cout << "Invalid command, type HELP for help." << std::endl;
-        }
-
-    }while(!exit);
+		
+		else if (command == "TEXT")
+			textMenu(&textList);
+		
+		//else if (command == "SHIP") //TODO
+			//shipMenu(&shipList);
+			
+		//else if (command == "EVENT") //TODO
+			//eventMenu(&eventList);
+			
+		else
+			std::cout << "Invalid command." << std::endl;
+    }
 
     std::cout << "Ending program." << std::endl;
-
-    //TEST
-    //command = "BBBB";
-    //findID = "Hello";
-    //std::cout << findID.compare(command);
-
     return 0;
 }
