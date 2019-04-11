@@ -23,9 +23,9 @@ This is a work-in-progress. I hope to have version 0.5.0 done before 2019 Septem
 
 Versioning is in the form of a.b.x.y where:
 * a is major version, most likely due to refactoring.
-* b is minor version, adding/changing functionality.
-* x is patch version, working but missing features.
-* y is night version, code is progressing and buggy.
+* b is minor version, adding/changing functionality, mostly stable.
+* x is patch version, code will compile but will have runtime errors (buggy/crashes).
+* y is night version, code will not compile due to syntax errors.
 
 #### Alpha Versions
 
