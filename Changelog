@@ -1,7 +1,7 @@
 Changelog
 
-v0.1.1
-Event editor now operational
+v0.1.1.6
+Event editor now operational JK THAT'S A LIE
 Event and Choice classes now have functions to access their data
 New global functions and streamlined main() to better organize access
 
