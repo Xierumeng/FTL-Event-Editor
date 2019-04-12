@@ -2,7 +2,7 @@
 // ------------
 // Name:    FTL Event Editor
 // Goal:    To allow users to import, modify, create, test, and export events
-// Version: 0.1.1 //FROM PROGRAM_VERSION
+// Version: 0.1.2 //FROM PROGRAM_VERSION
 // Patch:   5
 // For FTL: 1.6? The latest, anyway
 // Plan:    Adding own, simulating. Later: Import, export.
@@ -45,7 +45,7 @@
 #include <string.h>
 //#include <math.h>
 
-#define PROGRAM_VERSION "0.1.1" //FROM Version
+#define PROGRAM_VERSION "0.1.2" //FROM Version
 #define MAX_CREW_PROP 4 //Crew types
 #define ZERONE "(0 for no, 1 for yes): " //Event, Choice
 #define TYPE "(-1 for direct string, 0 for id=, 1 for load=): " //Reference or direct
