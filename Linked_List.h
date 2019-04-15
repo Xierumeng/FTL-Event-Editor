@@ -1,6 +1,10 @@
 #pragma once
+#include "Node.h"
+#include "Choice.h"
+#include <iostream>
 
 //template <typename T>
+class Node;
 class Linked_List {
 public:
 
