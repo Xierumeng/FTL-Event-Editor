@@ -15,7 +15,7 @@ This is a work-in-progress. I hope to have version 0.5.0 done before 2019 Septem
 
 ### Implemented
 
-* Create, modify, delete: Incomplete, but the user can play around with a basic text list.
+* Create, modify, delete: Complete for events and text, but not ships. Also extremely buggy.
 
 ## Versioning
 
