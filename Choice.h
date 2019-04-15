@@ -1,9 +1,11 @@
 #pragma once
 #include "Node.h"
 #include "Event.h"
-#include "Public.h"
+#include "Linked_List.h"
+#include <iostream>
 #include <string>
 
+class Event;
 class Choice : public Node { //T value is choice string
 public:
 
