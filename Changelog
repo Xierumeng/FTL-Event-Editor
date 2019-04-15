@@ -1,5 +1,10 @@
 Changelog
 
+v0.1.2
+Event editor actually operational now, although it may contain runtime errors and bugs.
+Support for text, events and choices.
+Global functions fixed.
+
 v0.1.1.6
 Event editor now operational JK THAT'S A LIE
 Event and Choice classes now have functions to access their data
