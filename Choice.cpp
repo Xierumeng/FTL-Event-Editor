@@ -1,6 +1,4 @@
 #include "Choice.h"
-#include "Linked_List.h"
-#include <iostream>
 
 Choice::Choice(std::string ID, Choice* p_next) :
 	Node(ID, p_next, nullptr),
