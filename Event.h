@@ -2,8 +2,12 @@
 #include "Node.h"
 #include "Choice.h"
 #include "Public.h"
+#include "Linked_List.h"
+#include <iostream>
 #include <string>
 
+class Node;
+class Linked_List;
 class Event : public Node { //T value is tag unique boolean
 public:
 
