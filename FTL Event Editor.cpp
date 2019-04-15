@@ -110,12 +110,12 @@ void findEvent(Event * p_event) { //!!!!
 				p_event->replaceValue();
 		}
 
-		p_choice = static_cast<Choice*>(p_event->getList()->findNode(std::to_string(command))); //Converts command to string and then searches p_event's !!!! FIX
+		p_choice = static_cast<Choice*>(p_event->getChoiceList()->findNode(std::to_string(command))); //Converts command to string and then searches p_event's !!!! FIX
 		if (p_choice == nullptr)
 			command = -1;
 
 		else
-			command == 0;
+			command = 0;
 
 		while (command == 0) {
 
@@ -130,7 +130,7 @@ void findEvent(Event * p_event) { //!!!!
 
 		}
 
-		p_event = p_choice->getEvent;
+		p_event = p_choice->getEvent();
 		if (p_event == nullptr)
 			command = -1;
 	}
@@ -417,5 +417,6 @@ int main() {
 	}
 
 	std::cout << "Ending program." << std::endl;
+	system("PAUSE");
 	return 0;
 }
