@@ -1,5 +1,4 @@
 #include "Node.h"
-#include <iostream>
 
 //template <typename T>
 Node::Node(std::string ID, Node* p_next, Node* p_head) :
