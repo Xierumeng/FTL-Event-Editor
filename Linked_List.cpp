@@ -1,8 +1,4 @@
 #include "Linked_List.h"
-#include "Node.h"
-#include <iostream>
-
-//TODO: Why does removing Linked_List:: fix problems?
 
 //template <typename T>
 Linked_List::Linked_List() :
@@ -99,6 +95,9 @@ Node* Linked_List::findLinearNode(std::string findID) {
 
 	if (!unMatch)
 		return p_currentNode;
+
+	else
+		return nullptr;
 }
 
 //template <typename T>
