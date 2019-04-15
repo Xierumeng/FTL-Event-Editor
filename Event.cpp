@@ -1,6 +1,4 @@
 #include "Event.h"
-#include "Linked_List.h"
-#include <iostream>
 
 Event::Event(std::string ID, Event* p_next) :
 	Node(ID, p_next, nullptr),
@@ -102,8 +100,8 @@ void Event::printSelf() {
 
 	std::cout << "Choices: " << std::endl;
 
-	for (Node* p_currentChoice{ p_choices->getHead() }; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext()) //!!!!
-		std::cout << p_currentChoice->getID << ". " << p_currentChoice->getValue; //!!!!
+	for (Choice* p_currentChoice{ static_cast<Choice*>(p_choices->getHead()) }; p_currentChoice != nullptr; p_currentChoice = static_cast<Choice*>(p_currentChoice->getNext())) //!!!!
+		std::cout << p_currentChoice->getID() << ". " << p_currentChoice->getValue(); //!!!!
 }
 
 Linked_List* Event::getChoiceList() {
