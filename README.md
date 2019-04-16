@@ -17,6 +17,10 @@ This is a work-in-progress. I hope to have version 0.5.0 done before 2019 Septem
 
 * Create, modify, delete: Complete for events and text, but not ships. Also extremely buggy.
 
+## Usage Instructions
+
+While one *could* simply double-click the binary file, it's better to run the program from the command prompt, as crashes won't immediately close the window. This would help me immensely with bug testing.
+
 ## Versioning
 
 ### Planned
