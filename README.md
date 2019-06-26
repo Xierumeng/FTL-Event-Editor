@@ -1,25 +1,25 @@
 # FTL Event Editor
 
 WIP: Allows the user to import, create, modify, delete, test, and export events for the video game FTL: Faster Than Light.
-This is a work-in-progress. I hope to have version 0.5.0 done before 2019 September and version 1.0.0 done before 2020.
+This is a work-in-progress. I hope to have version 0.5.0 done before October 2019 and version 1.0.0 done in Q1 2020.
 
 ## Features
 
 ### Planned
 
-* Import: The user can take an entire event xml and transfer the data into the program.
+* Import: The user can take an entire event XML file and transfer the data into the program.
 * Create, modify, delete: The user can edit the data in the program, or even create new events.
 * Test, simulate: The user can load in events and proceed just like in FTL. Note that more interaction is required (e.g. if a list is loaded the user must specify which item to load next).
-* Export: The user can transfer the program's internal data into an xml that's ready for FTL. This will be the most difficult part to debug.
-* Interface: Something that is not just entering commands into a console. Maybe even click-and-drag.
+* Export: The user can transfer the program's internal data into an XML file that's ready for FTL. This will be the most difficult part to debug.
+* Interface: Something that is not just entering commands into a console. Visualization of the event tree. Maybe even click-and-drag.
 
 ### Implemented
 
-* Create, modify, delete: Complete for events and text, but not ships. Also extremely buggy.
+* Create, modify, delete: Complete for events and text, but not ships. Also extremely buggy. Known issue: runtime error when loading empty event list or when creating new event.
 
 ## Usage Instructions
 
-While one *could* simply double-click the binary file, it's better to run the program from the command prompt, as crashes won't immediately close the window. This would help me immensely with bug testing.
+While one *could* simply double-click the binary file (.exe), it's better to run the program from the command prompt, as crashes won't immediately close the window. This would help immensely with bug testing. Open a new issue and copy-paste the inputs and outputs into the text field.
 
 ## Versioning
 
@@ -30,6 +30,7 @@ Versioning is in the form of a.b.x.y where:
 * b is minor version, adding/changing functionality, mostly stable.
 * x is patch version, code will compile but will have runtime errors (buggy/crashes).
 * y is night version, code will not compile due to syntax errors.
+Note: Versioning numbers are more of a guide than a rule.
 
 #### Alpha Versions
 
@@ -58,6 +59,6 @@ Please see the appropriate file.
 
 ## Conclusion
 
-Hopefully everything goes to plan. I'm also thinking of adapting this to the other FTL xml files (blueprints, auto, etc.), but that will be for next year (2020).
+Hopefully everything goes to plan. I'm also thinking of adapting this to the other FTL XML files (blueprints, auto, etc.), but that will be later in 2020.
 
 Xierumeng
