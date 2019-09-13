@@ -36,6 +36,8 @@ Note: Versioning numbers are more of a guide than a rule.
 
 * 0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
 * 0.1.x Addition of FTL data (events, text, rewards, ships, equipment etc.) and simulation environment
+* 0.1.3 Last version with linked list and nodes. 2019-09-13.
+* 0.1.4.x Refactoring using maps instead of linked lists. Start of proper versioning control with Git.
 * 0.2.x Exporting program contents to XML format
 * 0.3.x Importing XML to program-readable format
 * 0.4.x Quality assurance, UI changes, improved error feedback, forum post
