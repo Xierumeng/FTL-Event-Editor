@@ -1,11 +1,12 @@
 #include "Event.h"
 
-Event::Event(std::string ID, Event* p_next) :
-	Node(ID, p_next, nullptr),
+Event::Event() :
 	Unique{0},
 	textType{ -1 },
 	textID{ "" },
 
+	/*
+	//TODO: Comment data out for debugging
 	distress{ 0 },
 	repair{ 0 },
 	store{ 0 },
@@ -28,7 +29,9 @@ Event::Event(std::string ID, Event* p_next) :
 
 	questID{ "" },
 	returnEvent{ 0 },
-	p_choices{ new Linked_List }
+	*/
+
+	p_choices{ new Linked_List<Choice> }
 {
 }
 
@@ -49,6 +52,8 @@ void Event::printSelf() {
 
 	std::cout << textID << std::endl;
 
+	/*
+	//TODO: Comment data out for debugging
 	std::cout << "Map distress: " << distress << std::endl;
 	std::cout << "Map repair: " << repair << std::endl;
 	std::cout << "Map store: " << store << std::endl;
@@ -95,16 +100,17 @@ void Event::printSelf() {
 
 	std::cout << "Quest: " << questID << std::endl;
 	std::cout << "Forcibly end event: " << returnEvent << std::endl;
+	*/
 
 	std::cout << std::endl;
 
 	std::cout << "Choices: " << std::endl;
 
-	for (Choice* p_currentChoice{ static_cast<Choice*>(p_choices->getHead()) }; p_currentChoice != nullptr; p_currentChoice = static_cast<Choice*>(p_currentChoice->getNext())) //!!!!
+	for (Node<Choice>* p_currentChoice{ p_choices->getHead() }; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext()) //!!!!
 		std::cout << p_currentChoice->getID() << ". " << p_currentChoice->getValue(); //!!!!
 }
 
-Linked_List* Event::getChoiceList() {
+Linked_List<Choice>* Event::getChoiceList() {
 	return p_choices;
 }
 
@@ -129,6 +135,8 @@ void Event::replaceValue() {
 	std::cout << "Event text: ";
 	std::cin >> textID;
 
+	/*
+	//TODO: Comment data out for debugging
 	std::cout << "Map distress (0 for no, 1 for yes): ";
 	std::cin >> numCom;
 
@@ -226,6 +234,7 @@ void Event::replaceValue() {
 		return;
 
 	returnEvent = numCom;
+	*/
 
 	std::cout << std::endl;
 
@@ -302,7 +311,7 @@ void Event::replaceChoice() {
 	std::cout << "Replacing ID's with numbers in order..." << std::endl;
 
 	int i{ 0 };
-	for (Node* p_currentChoice{ p_choices->getHead() }; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext()) {
+	for (Node<Choice>* p_currentChoice{ p_choices->getHead() }; p_currentChoice != nullptr; p_currentChoice = p_currentChoice->getNext()) {
 
 		i++;
 		p_currentChoice->replaceID(std::to_string(i));

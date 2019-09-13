@@ -8,7 +8,7 @@
 // Plan:    Adding own, simulating. Later: Import, export.
 // Author:  Xierumeng
 // Contact: https://github.com/Xierumeng/FTL-Event-Editor
-// License: Copyright Â© 2019
+// License: Copyright © 2019
 // Notes:   For FTL Faster-than-Light. Use at your own risk; no liability is held to the author of this program.
 // ------------
 */
@@ -40,24 +40,15 @@
 // ------------
 */
 
-#include <iostream>
-#include <stdlib.h>
-#include <string.h>
-//#include <math.h>
+#include "FTL Event Editor.h"
 
-#include "Linked_List.h"
-#include "Node.h"
-#include "Event.h"
-
-#define PROGRAM_VERSION "0.1.2" //FROM Version
+#define PROGRAM_VERSION "0.1.3" //FROM Version
 #define MAX_CREW_PROP 4 //Crew types
 //#define ZERONE "(0 for no, 1 for yes): " //Event, Choice
 //#define TYPE "(-1 for direct string, 0 for id=, 1 for load=): " //Reference or direct
 //#define CONFIRM "y for yes, otherwise no: " //y confirmation
 //#define INVALID "Invalid input, operation aborted."
 #define NOABORT "(Warning: You cannot abort this operation once it has begun)" //Cannot abort action once started
-
-int main();
 
 /* TODO Later
 class Ship : public Node { //T value is autoB boolean //TODO
@@ -110,7 +101,7 @@ void findEvent(Event * p_event) { //!!!!
 				p_event->replaceValue();
 		}
 
-		p_choice = static_cast<Choice*>(p_event->getChoiceList()->findNode(std::to_string(command))); //Converts command to string and then searches p_event's !!!! FIX
+		p_choice = p_event->getChoiceList()->findNode(std::to_string(command)); //Converts command to string and then searches p_event's !!!! FIX
 		if (p_choice == nullptr)
 			command = -1;
 
@@ -121,7 +112,7 @@ void findEvent(Event * p_event) { //!!!!
 
 			p_choice->printSelf();
 			std::cout << "Enter an integer (0 to edit choice and event type, 1 to continue to event, invalid to return to menu)" << std::endl;
-			std::cout << "Note: If the event is referenced you will be returned to menu. If you want edit the referenced event use FIND and EDIT from the menu." << std::endl;
+			std::cout << "Note: If the event is referenced you will be returned to menu. If you want edit the referenced event use FIND from the menu." << std::endl;
 			std::cin >> command;
 			std::cout << std::endl;
 
@@ -139,20 +130,20 @@ void findEvent(Event * p_event) { //!!!!
 void helpText() {
 
 	std::cout << std::endl << "Valid commands are:" << std::endl << std::endl;
-	std::cout << "BACK   - Exits the program." << std::endl;
-	std::cout << "PRINT  - Prints the current list of items." << std::endl;
+	std::cout << "BACK   - Goes back to the main menu." << std::endl;
+	std::cout << "PRINT  - Prints the current table of items." << std::endl;
 	std::cout << "FIND   - Searches for the item specificed and prints its contents. For events, allows you to edit the contents as well." << std::endl;
-	std::cout << "CREATE - Creates a new item with the specificed name without duplicates." << std::endl;
-	std::cout << "EDIT   - Replaces the contents of the item with the specified input. For events, only the unique tag will be changed, use FIND instead." << std::endl;
+	std::cout << "CREATE - Creates a new item with the specificed name without duplicates. The item starts without any data." << std::endl;
+	std::cout << "EDIT   - Replaces the contents of the item with the specified input. Not used for events (use FIND instead)." << std::endl;
 	std::cout << "DELETE - Deletes the specified item and its contents. This is irreversible." << std::endl;
 	//std::cout << "IMPORT - Imports an XML file into the program." << std::endl;
 	//std::cout << "EXPORT - Exports program contents into an XML file." << std::endl;
 	std::cout << std::endl << "Warning: You might not be able to cancel an operation once it has begun." << std::endl;
 }
 
-void eventMenu(Linked_List * eventList) {
+void eventMenu(Linked_List<Event> * eventList) {
 
-	Node* p_current{ nullptr }; //Keep for load functions
+	Event* p_current{ nullptr }; //Keep for load functions
 	//Event* p_event{ nullptr }; //For findEvent TODO
 
 	bool back{ 0 };
@@ -161,7 +152,7 @@ void eventMenu(Linked_List * eventList) {
 
 	while (!back) {
 
-		std::cout << std::endl << "In event list menu (enter HELP for a list of valid commands): ";
+		std::cout << std::endl << "In event table menu (enter HELP for a list of valid commands): ";
 		std::cin >> command;
 
 		if (command == "BACK") //FROM replaceChoice
@@ -180,10 +171,10 @@ void eventMenu(Linked_List * eventList) {
 			p_current = eventList->findNode(command);
 
 			if (p_current == nullptr)
-				std::cout << "Not found." << std::endl;
+				std::cout << "ID not found." << std::endl;
 
 			else
-				findEvent(static_cast<Event*>(p_current));
+				findEvent(p_current);
 		}
 		else if (command == "CREATE") {
 
@@ -197,11 +188,11 @@ void eventMenu(Linked_List * eventList) {
 
 				if (!eventList->emptyList()) {
 
-					std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
+					std::cout << "Under parent (if you don't want under parent, type a non-existent ID: ";
 					std::cin >> parent;
 				}
 
-				if (eventList->findNode(parent) == nullptr)
+				if (eventList->findLinearNode(parent) == nullptr)
 					parent = "";
 
 				if (eventList->createNode(command, parent) == 1) {
@@ -219,7 +210,7 @@ void eventMenu(Linked_List * eventList) {
 			}
 
 		}
-		else if (command == "EDIT") {
+		/*else if (command == "EDIT") {
 
 			std::cout << "Event ID to modify: ";
 			std::cin >> command;
@@ -237,14 +228,14 @@ void eventMenu(Linked_List * eventList) {
 				std::cout << command << " replaced successfully." << std::endl;
 			}
 
-		}
+		}*/
 		else if (command == "DELETE") {
 
-			std::cout << "Text ID to delete: ";
+			std::cout << "Event ID to delete: ";
 			std::cin >> command;
 
 			if (eventList->findNode(command) == nullptr)
-				std::cout << "Not found." << std::endl;
+				std::cout << "ID not found." << std::endl;
 
 			else {
 
@@ -263,17 +254,58 @@ void eventMenu(Linked_List * eventList) {
 
 //void shipMenu(Linked_List *shipList); //TODO
 
-void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add templated functions?
+int main() {
 
-	Node* p_current{ nullptr }; //Keep for load functions
+	Linked_List<std::string> textList;
+	//Linked_List<std::string> shipList;
+	Linked_List<Event> eventList;
+	int command{ 0 };
 
+	std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
+	std::cout << "Disclaimer: This is Xierumeng's program and is extremely buggy. Xierumeng is not liable for any losses of data due to bugs or crashes from you using this. If you do encounter such problems, please open an issue on Github (https://github.com/Xierumeng/FTL-Event-Editor) so Xierumeng can fix it." << std::endl;
+
+	while (command != 4) { //FROM replaceChoice
+
+		std::cout << "Please choose a table to edit (enter a number):" << std::endl;
+		std::cout << "1. TEXT" << std::endl;
+		std::cout << "2. SHIP (WIP, coming soon)" << std::endl; //TODO
+		std::cout << "3. EVENT" << std::endl;
+		std::cout << "4. EXIT" << std::endl;
+		std::cin >> command;
+
+		/*if (command == 4)
+			exit = 1;*/
+
+		if (command == 1)
+			textMenu(&textList);
+
+		else if (command == 2) //TODO
+			std::cout << "TODO Coming soon!" << std::endl;
+			//shipMenu(&shipList);
+
+		else if (command == 3)
+			eventMenu(&eventList);
+
+		else
+			std::cout << "Invalid command." << std::endl;
+	}
+
+	std::cout << "Ending program." << std::endl;
+	system("PAUSE");
+	return 0;
+}
+
+void textMenu(Linked_List<std::string>* textList) { //FROM [...]Menu //TODO: Possibly add templated functions?
+
+	Node<std::string>* p_current{ nullptr }; //Keep for load functions
+	
 	bool back{ 0 };
 	std::string command{ "" };
 	std::string parent{ "" };
 
 	while (!back) {
 
-		std::cout << std::endl << "In text list menu (enter HELP for a list of valid commands): ";
+		std::cout << std::endl << "In text table menu (enter HELP for a list of valid commands): ";
 		std::cin >> command;
 
 		if (command == "BACK") //FROM replaceChoice
@@ -292,7 +324,7 @@ void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add te
 			p_current = textList->findNode(command);
 
 			if (p_current == nullptr)
-				std::cout << "Not found." << std::endl;
+				std::cout << "ID not found." << std::endl;
 
 			else {
 
@@ -314,16 +346,16 @@ void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add te
 
 				if (!textList->emptyList()) {
 
-					std::cout << "Under parent (if you don't want under parent, type an invalid ID: ";
+					std::cout << "Under parent (if you don't want under parent, type a non-existent ID: ";
 					std::cin >> parent;
 				}
 
-				if (textList->findNode(parent) == nullptr)
+				if (textList->findLinearNode(parent) == nullptr)
 					parent = "";
 
 				if (textList->createNode(command, parent) == 1) {
 
-					std::cout << command << " created successfully";
+					std::cout << command << " created successfully with no parent";
 
 					if (parent != "")
 						std::cout << " under " << parent;
@@ -343,15 +375,15 @@ void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add te
 			p_current = textList->findNode(command);
 
 			if (p_current == nullptr)
-				std::cout << "Not found." << std::endl;
+				std::cout << "ID not found." << std::endl;
 
 			else {
 
 				std::cout << "Contents of text ID replacement text: ";
 				std::cin >> command;
 				textList->modifyNode(p_current, command);
+				//std::cout << p_current->getID << " replaced successfully." << std::endl; !!!!
 				p_current = nullptr;
-				std::cout << command << " replaced successfully." << std::endl;
 			}
 
 		}
@@ -361,7 +393,7 @@ void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add te
 			std::cin >> command;
 
 			if (textList->findNode(command) == nullptr)
-				std::cout << "Not found." << std::endl;
+				std::cout << "ID not found." << std::endl;
 
 			else {
 
@@ -376,47 +408,4 @@ void textMenu(Linked_List * textList) { //FROM [...]Menu //TODO: Possibly add te
 		else
 			std::cout << "Invalid command, type HELP for help." << std::endl;
 	}
-}
-
-
-int main() {
-
-	Linked_List textList;
-	Linked_List shipList;
-	Linked_List eventList;
-
-	Node* p_current{ nullptr }; //Keep for load functions
-
-	bool exit{ 0 };
-	std::string command{ "" };
-	std::string parent{ "" };
-	//std::string findID{""};
-
-	std::cout << "FTL Event Simulator v" << PROGRAM_VERSION << std::endl;
-	std::cout << "Disclaimer: This is Xierumeng's program and is extremely buggy. Xierumeng is not liable for any losses of data due to bugs or crashes from you using this. If you do encounter such problems, please open an issue on Github so Xierumeng can fix it." << std::endl;
-
-	while (!exit) { //FROM replaceChoice
-
-		std::cout << "Please choose a list to edit (valid choices include TEXT, SHIP, EVENT, and EXIT to quit the program): ";
-		std::cin >> command;
-
-		if (command == "EXIT")
-			exit = 1;
-
-		else if (command == "TEXT")
-			textMenu(&textList);
-
-		//else if (command == "SHIP") //TODO
-			//shipMenu(&shipList);
-
-		//else if (command == "EVENT") //TODO
-			//eventMenu(&eventList);
-
-		else
-			std::cout << "Invalid command." << std::endl;
-	}
-
-	std::cout << "Ending program." << std::endl;
-	system("PAUSE");
-	return 0;
 }

@@ -6,7 +6,7 @@
 #include <string>
 
 class Event;
-class Choice : public Node { //T value is choice string
+class Choice : public Node<Choice> { //T value is choice string
 public:
 
 	Choice(std::string ID, Choice* p_next);

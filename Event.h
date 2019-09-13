@@ -6,21 +6,14 @@
 #include <iostream>
 #include <string>
 
-class Node;
-class Linked_List;
-class Event : public Node { //T value is tag unique boolean
+//class Node<Event>;
+class Choice;
+//class Linked_List;
+class Event{
 public:
 
-	Event(std::string ID, Event* p_next);
+	Event();
 	~Event();
-
-	void printSelf();
-	Linked_List* getChoiceList();
-
-	void replaceValue();
-	void replaceChoice();
-
-protected:
 
 	bool Unique;
 
@@ -28,6 +21,7 @@ protected:
 	int textType; //FROM Choice -1 for direct string, 0 for id=, 1 for load=
 	std::string textID;
 
+	/*
 	//Beacon appearance only
 	bool distress;
 	bool repair;
@@ -64,6 +58,7 @@ protected:
 
 	std::string questID;
 	bool returnEvent; //Ending the event early with <event/>
+	*/
 
-	Linked_List* p_choices;
+	Linked_List<Choice>* p_choices;
 };

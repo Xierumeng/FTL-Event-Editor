@@ -1,15 +1,15 @@
 #include "Linked_List.h"
 
-//template <typename T>
-Linked_List::Linked_List() :
+template <typename T>
+Linked_List<T>::Linked_List() :
 	p_listHead{ nullptr }
 {
 }
 
-//template <typename T>
-Linked_List::~Linked_List() //FROM ~Node()
+template <typename T>
+Linked_List<T>::~Linked_List() //FROM ~Node()
 {
-	Node* p_next{ p_listHead };
+	Node<T>* p_next{ p_listHead };
 
 	while (p_listHead != nullptr) {
 
@@ -19,27 +19,27 @@ Linked_List::~Linked_List() //FROM ~Node()
 	}
 }
 
-//template <typename T>
-Node* Linked_List::getHead() {
+template <typename T>
+Node<T>* Linked_List<T>::getHead() {
 	return p_listHead;
 }
 
-//template <typename T>
-bool Linked_List::emptyList() {
+template <typename T>
+bool Linked_List<T>::emptyList() {
 	return (p_listHead == nullptr);
 }
 
-//template <typename T>
-void Linked_List::printList() {
+template <typename T>
+void Linked_List<T>::printList() {
 
-	for (Node* p_currentNode{ p_listHead }; p_currentNode != nullptr; p_currentNode = p_currentNode->getNext()) {
+	for (Node<T>* p_currentNode{ p_listHead }; p_currentNode != nullptr; p_currentNode = p_currentNode->getNext()) {
 		//Start with list head then increment through until end of list
 
 		std::cout << p_currentNode->getID() << std::endl;
 		//if (p_currentNode->getHead() != nullptr) //FROM: printNode
 		//   std::cout << "    Sublist: ";
 
-		for (Node* p_subNode{ p_currentNode->getHead() }; p_subNode != nullptr; p_subNode = p_subNode->getNext()) {
+		for (Node<T>* p_subNode{ p_currentNode->getHead() }; p_subNode != nullptr; p_subNode = p_subNode->getNext()) {
 
 			std::cout << " - " << p_subNode->getID() << std::endl;
 			//if (p_subNode == nullptr)
@@ -48,13 +48,13 @@ void Linked_List::printList() {
 	}
 }
 
-//template <typename T>
-Node* Linked_List::findNode(std::string findID) {
+template <typename T>
+Node<T>* Linked_List<T>::findNode(std::string findID) {
 
 	if (!emptyList()) {
 
-		Node* p_currentNode{ p_listHead };
-		Node* p_subNode{ p_currentNode->getHead() };
+		Node<T>* p_currentNode{ p_listHead };
+		Node<T>* p_subNode{ p_currentNode->getHead() };
 
 		while (p_currentNode != nullptr) { //FROM: deleteNode
 
@@ -78,10 +78,10 @@ Node* Linked_List::findNode(std::string findID) {
 	return nullptr;
 }
 
-//template <typename T>
-Node* Linked_List::findLinearNode(std::string findID) {
+template <typename T>
+Node<T>* Linked_List<T>::findLinearNode(std::string findID) {
 
-	Node* p_currentNode{ p_listHead };
+	Node<T>* p_currentNode{ p_listHead };
 	int unMatch{ 1 };
 
 	while (p_currentNode != nullptr && unMatch > 0) {
@@ -100,13 +100,13 @@ Node* Linked_List::findLinearNode(std::string findID) {
 		return nullptr;
 }
 
-//template <typename T>
-void Linked_List::printNode(Node * p_current) {
+template <typename T>
+void Linked_List<T>::printNode(Node<T>* p_current) {
 	p_current->printSelf();
 }
 
-//template <typename T>
-int Linked_List::createNode(std::string createID, std::string parentID) {
+template <typename T>
+int Linked_List<T>::createNode(std::string createID, std::string parentID) {
 	//List is empty - Just create new node.
 	//Otherwise, check for duplicate from createID - return 0 if it does.
 	//Can't find parentID - return -1.
@@ -123,8 +123,8 @@ int Linked_List::createNode(std::string createID, std::string parentID) {
 
 	else {
 
-		Node* p_currentNode{ p_listHead };
-		Node* p_previousNode{ nullptr };
+		Node<T>* p_currentNode{ p_listHead };
+		Node<T>* p_previousNode{ nullptr };
 		int unMatch{ 1 };
 
 		if (parentID != "") { //If the parentID exists, find the parentID node
@@ -175,22 +175,22 @@ int Linked_List::createNode(std::string createID, std::string parentID) {
 	}
 }
 
-//template <typename T>
-void Linked_List::modifyNode(Node * p_currentNode, std::string newValue) {
+template <typename T>
+void Linked_List<T>::modifyNode(Node<T>* p_currentNode, std::string newValue) {
 	p_currentNode->replaceValue(newValue);
 }
 
-//template <typename T>
-int Linked_List::deleteNode(std::string deleteID) {
+template <typename T>
+int Linked_List<T>::deleteNode(std::string deleteID) {
 
 	if (emptyList())
 		return 0;
 
 	else {
 
-		Node* p_currentNode{ p_listHead };
-		Node* p_subNode{ p_currentNode->getHead() };
-		Node* p_previousNode{ nullptr };
+		Node<T>* p_currentNode{ p_listHead };
+		Node<T>* p_subNode{ p_currentNode->getHead() };
+		Node<T>* p_previousNode{ nullptr };
 		int unMatch{ 1 };
 		bool subList{ 0 };
 
@@ -228,7 +228,7 @@ int Linked_List::deleteNode(std::string deleteID) {
 
 		if (!unMatch) {
 
-			if (p_previousNode != nullptr) {
+			if (p_previousNode != nullptr) { //Checks for the start of the list
 
 				if (subList)
 					p_currentNode = p_subNode;
@@ -241,7 +241,7 @@ int Linked_List::deleteNode(std::string deleteID) {
 
 			}
 			else
-				p_listHead = nullptr;
+				p_listHead = p_currentNode->getNext();
 
 			delete p_currentNode;
 			return 1;
