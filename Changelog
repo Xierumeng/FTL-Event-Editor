@@ -1,5 +1,11 @@
 Changelog
 
+v0.1.4
+Pretty much the last of the numbered revisions. I now know how to use versioning control and Git.
+
+v0.1.3
+Using proper versioning control this time.
+
 v0.1.2
 Event editor actually operational now, although it may contain runtime errors and bugs.
 Support for text, events and choices.
