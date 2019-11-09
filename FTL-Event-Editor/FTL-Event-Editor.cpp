@@ -25,8 +25,10 @@
 // ------------
 */
 
-#include "FTLEventEditor.h"
+#include "FTL-Event-Editor.h"
 #include "tinyxml2.h"
+#include <QApplication>
+#include <QPushButton>
 
 int main()
 {
