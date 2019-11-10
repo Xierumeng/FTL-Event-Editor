@@ -1,21 +1,20 @@
 # FTL Event Editor
 
 WIP: Allows the user to import, create, modify, delete, test, and export events for the video game FTL: Faster Than Light.
-This is a work-in-progress. I hope to have version 0.5.0 done before October 2019 and version 1.0.0 done in Q1 2020.
+This is a work-in-progress. I hope to have a working version by the end of the year. But given how lazy I am, this is probably not going to occur.
 
 ## Features
 
 ### Planned
 
-* Import: The user can take an entire event XML file and transfer the data into the program.
+* Import, export: The user can take an entire event XML file and transfer the data into the program, and can also transfer the program's internal data into an XML file that's ready for FTL. This will be the most difficult part to debug.
 * Create, modify, delete: The user can edit the data in the program, or even create new events.
 * Test, simulate: The user can load in events and proceed just like in FTL. Note that more interaction is required (e.g. if a list is loaded the user must specify which item to load next).
-* Export: The user can transfer the program's internal data into an XML file that's ready for FTL. This will be the most difficult part to debug.
 * Interface: Something that is not just entering commands into a console. Visualization of the event tree. Maybe even click-and-drag.
 
 ### Implemented
 
-* Create, modify, delete: Complete for events and text, but not ships. Also extremely buggy. Known issue: runtime error when loading empty event list or when creating new event.
+* None, at the moment, since I'm refactoring.
 
 ## Usage Instructions
 
@@ -25,11 +24,10 @@ While one *could* simply double-click the binary file (.exe), it's better to run
 
 ### Planned
 
-Versioning is in the form of a.b.x.y where:
+Versioning is in the form of a.b.c where:
 * a is major version, most likely due to refactoring.
 * b is minor version, adding/changing functionality, mostly stable.
-* x is patch version, code will compile but will have runtime errors (buggy/crashes).
-* y is night version, code will not compile due to syntax errors.
+* c is the old "will compile" version containing runtime errors.
 Note: Versioning numbers are more of a guide than a rule.
 
 #### Alpha Versions
@@ -37,30 +35,20 @@ Note: Versioning numbers are more of a guide than a rule.
 * 0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
 * 0.1.x Addition of FTL data (events, text, rewards, ships, equipment etc.) and simulation environment
 * 0.1.3 Last version with linked list and nodes. 2019-09-13.
-* 0.1.4.x Refactoring using maps instead of linked lists. Start of proper versioning control with Git.
-* 0.2.x Exporting program contents to XML format
-* 0.3.x Importing XML to program-readable format
-* 0.4.x Quality assurance, UI changes, improved error feedback, forum post
+* 0.1.4 Refactoring using maps instead of linked lists. Start of proper versioning control with Git.
+* 0.4 Quality assurance, UI changes, improved error feedback, forum post
 
 #### Beta Versions
 
-* 0.5.x First finalized version of project for public consumption, bugfixes
-* 0.6.x Modify UI to be more user-friendly based on public feedback
-* 0.7.x ???
-* 0.8.x ???
-* 0.9.x ???
+* 0.5 First finalized version of project for public consumption, bugfixes
+* 0.6 Modify UI to be more user-friendly based on public feedback
 
 #### Release Versions
 
-* 1.0.x Second finalized version of project for public consumption, bugfixes
-* 2.0.x Overhaul if necessary
-
-### Changelog
-
-Please see the appropriate file.
+* 1.0 Second finalized version of project for public consumption, bugfixes
 
 ## Conclusion
 
-Hopefully everything goes to plan. I'm also thinking of adapting this to the other FTL XML files (blueprints, auto, etc.), but that will be later in 2020.
+Hopefully everything goes to plan. I'm also thinking of adapting this to the other FTL XML files (blueprints, auto, etc.), but that will be later.
 
 Xierumeng
