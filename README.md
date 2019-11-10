@@ -28,6 +28,7 @@ Versioning is in the form of a.b.c where:
 * a is major version, most likely due to refactoring.
 * b is minor version, adding/changing functionality, mostly stable.
 * c is the old "will compile" version containing runtime errors.
+
 Note: Versioning numbers are more of a guide than a rule.
 
 #### Alpha Versions
