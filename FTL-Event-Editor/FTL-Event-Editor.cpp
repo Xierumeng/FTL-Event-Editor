@@ -36,27 +36,37 @@ int main()
     tinyxml2::XMLDocument eventXML;
     eventXML.LoadFile("D:/FTLDats/data/events.xml");
 
+    // Example code
+#if 0
     ///*
     // <FTL>
     //   <event etc.>
+    tinyxml2::XMLElement* currentNode = eventXML.FirstChildElement("FTL")->FirstChildElement("event");
     //     <text> We are here
-    tinyxml2::XMLElement* textElement = eventXML.FirstChildElement("FTL")->FirstChildElement("event")->FirstChildElement("text");
-    // <text>Now we are here</text>
-    std::string text = textElement->GetText();
+    tinyxml2::XMLElement* textElement = currentNode->FirstChildElement("text");
+    // <text>Now we are in here</text>
+    std::string text0 = textElement->GetText();
     //*/
-    
+
     ///*
     // <FTL>
     //   <event etc.>
     //     <boarders etc.> We are here
-    tinyxml2::XMLElement* boarderElement = eventXML.FirstChildElement("FTL")->FirstChildElement("event")->FirstChildElement("boarders");
+    tinyxml2::XMLElement* boarderElement = currentNode->FirstChildElement("boarders");
     int minBoarders = 0;
     // <boarders min="Now we are here">
     boarderElement->QueryIntAttribute("min", &minBoarders);
 
-    std::cout << "Hello? " << text << " " << minBoarders << std::endl;
-    //eventXML.Print();
+    // To the next XML element (which is probably an event)
+    currentNode = currentNode->NextSiblingElement();
+    const char* eventName;
+    currentNode->QueryStringAttribute("name", &eventName);
+
+    // Hello? text0=="Oh no enemies!" minBoarders==3 eventName=="REMOVAL_TEST"
+    std::cout << "Hello? " << text0 << " " << minBoarders << " " << eventName << std::endl;
+#endif
     
+
     system("PAUSE");
     return 0;
 }
