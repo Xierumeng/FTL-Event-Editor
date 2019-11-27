@@ -26,6 +26,9 @@
 */
 
 #include "FTL-Event-Editor.h"
+#include "Common.h"
+#include "Event.h"
+
 #include "tinyxml2.h"
 #include <stdlib.h>
 //#include <QApplication>
