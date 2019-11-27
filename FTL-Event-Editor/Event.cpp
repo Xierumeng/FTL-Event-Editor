@@ -1,5 +1,6 @@
 #include "Event.h"
 
+// Event
 Event::Event(std::string newId)
 {
     id.eventName = newId;
@@ -21,12 +22,66 @@ IdType Event::getEventType()
     return id.type;
 }
 
-Text getText();
-std::string getTextString();
-void setText(Text newText);
+// EventName
+EventName::EventName(std::string newId):
+    Event(newId)
+{
+    id.type = IdType::Name;
+}
 
-bool getUnique();
-void setUnique(bool newUnique);
+// TODO FIX THIS COPY CONSTRUCTOR
+EventName::EventName(Event const &oldEvent, std::string newId):
+    EventName(newId)
+{
 
-bool getEventBreak();
-void setEventBreak();
+}
+
+Text EventName::getText()
+{
+    return text;
+}
+
+std::string EventName::getTextString()
+{
+    return text.data;
+}
+
+IdType EventName::getTextType()
+{
+    return text.type;
+}
+
+void EventName::setText(Text newText)
+{
+    text = newText;
+}
+
+bool EventName::getUnique()
+{
+    return unique;
+}
+
+void EventName::setUnique(bool newUnique)
+{
+    unique = newUnique;
+}
+
+void EventName::toggleUnique()
+{
+    unique = !unique;
+}
+
+bool EventName::getEventBreak()
+{
+    return eventBreak;
+}
+
+void EventName::setEventBreak(bool newBreak)
+{
+    eventBreak = newBreak;
+}
+
+void EventName::toggleEventBreak()
+{
+    eventBreak = !eventBreak;
+}

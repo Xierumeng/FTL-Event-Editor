@@ -4,6 +4,7 @@
 #include "EventSupport.h"
 
 #include <string>
+#include <vector>
 
 struct EventId
 {
@@ -32,24 +33,29 @@ class EventName : Event // name=
 public:
 
     EventName(std::string newId);
-    EventName(const Event &oldEvent, std::string newName); // Copy constructor
+    EventName(Event const &oldEvent, std::string newId = ""); // Copy constructor
     ~EventName() = default;
 
     Text getText();
     std::string getTextString();
+    IdType getTextType();
     void setText(Text newText);
 
     bool getUnique();
     void setUnique(bool newUnique);
+    void toggleUnique();
 
     bool getEventBreak();
-    void setEventBreak();
+    void setEventBreak(bool newBreak);
+    void toggleEventBreak();
 
 private:
 
     Text text;
     bool unique;
     bool eventBreak; // <event/>
+
+    std::vector<Choice*> choices;
 
 #if 0 // TODO Remove when Event class testing complete
     // Beacon appearance
