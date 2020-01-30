@@ -152,11 +152,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Choice.cpp" />
+    <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FTL-Event-Editor.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FTL-Event-Editor.h" />
+    <ClInclude Include="Choice.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventData.h" />
+    <ClInclude Include="EventSupport.h" />
     <ClInclude Include="tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
