@@ -2,81 +2,56 @@
 
 #include "Common.h"
 #include "EventSupport.h"
+#include "Choice.h"
+#include "EventData.h"
 
 #include <string>
 #include <vector>
+#include <memory>
 
 struct EventId
 {
-    IdType type = IdType::Name;
+    EventId() = default;
+    EventId(std::string name, IdType type)
+    {
+        eventType = type;
+        eventName = name;
+    }
+
+    IdType eventType = IdType::Name;
     std::string eventName = "";
 };
 
-class Event // load=
+// Event class
+class Event
 {
 public:
 
-    Event(std::string newId);
-    ~Event() = default;
+    Event() = default; // name=
+    Event(std::string eventIdName) : m_id(EventId(eventIdName, IdType::Name)) {} // name=
+    Event(EventId newId) :
+        m_id(newId)
+    {
+        if (m_id.eventType == IdType::Load)
+        {
+            m_p_eventData = nullptr;
+        }
+    }
 
-    EventId getEventId();
-    std::string getEventIdString();
-    IdType getEventType();
+    EventId getEventId() { return m_id; }
+    std::string getEventIdString() { return m_id.eventName; }
+    IdType getEventType() { return m_id.eventType; }
 
-protected:
-
-    EventId id; // Once set, cannot be changed
-};
-
-class EventName : Event // name=
-{
-public:
-
-    EventName(std::string newId);
-    EventName(Event const &oldEvent, std::string newId = ""); // Copy constructor
-    ~EventName() = default;
-
-    Text getText();
-    std::string getTextString();
-    IdType getTextType();
-    void setText(Text newText);
-
-    bool getUnique();
-    void setUnique(bool newUnique);
-    void toggleUnique();
-
-    bool getEventBreak();
-    void setEventBreak(bool newBreak);
-    void toggleEventBreak();
+    std::shared_ptr<EventData> getEventData() { return m_p_eventData; }
 
 private:
 
-    Text text;
-    bool unique;
-    bool eventBreak; // <event/>
+    EventId m_id; // Once set, should ABSOLUTELY NOT be changed
+    std::shared_ptr<EventData> m_p_eventData = std::make_shared<EventData>(EventData()); // name= event data
+};
 
-    std::vector<Choice*> choices;
-
-#if 0 // TODO Remove when Event class testing complete
-    // Beacon appearance
-    Environment hazard = Environment::None;
-    bool distress = false;
-    bool repair = false;
-    bool store = false;
-
-    // Single-line XML items
-    int modifyPursuit = 0; // Negative delays, positive speeds up fleet
-    bool reveal_map = false;
-    bool secretSector = false; // Crystal sector
-    Fleet fleet = Fleet::None;
-    int unlockShip = 0;
-    EventId quest;
-
-    // Resources
-    std::string augment = "";
-    std::string drone = "";
-    std::string weapon = "";
-    std::string remove = ""; // Removes equipment
-    ItemModify item_modify; // Adds or removes consumables
-#endif
+struct EventList
+{
+    std::string name = "";
+    std::vector<Event> events;
 };
