@@ -1,6 +1,6 @@
 #pragma once
-
 #include "Event.h"
+#include "Common.h"
 
 struct MaxGroup
 {
@@ -11,6 +11,11 @@ struct MaxGroup
 class Choice
 {
 public:
+
+    Choice() = default;
+    Choice(Event newEvent) : m_event(newEvent) {}
+    Choice(Text newText, Event newEvent) : m_text(newText), m_event(newEvent) {}
+    ~Choice() = default;
 
     Text getText() { return m_text; }
     void setText(Text newText) { m_text = newText; }

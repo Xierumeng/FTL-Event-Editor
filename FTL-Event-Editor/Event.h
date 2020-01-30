@@ -2,7 +2,6 @@
 
 #include "Common.h"
 #include "EventSupport.h"
-#include "Choice.h"
 #include "EventData.h"
 
 #include <string>
@@ -17,6 +16,7 @@ struct EventId
         eventType = type;
         eventName = name;
     }
+    ~EventId() = default;
 
     IdType eventType = IdType::Name;
     std::string eventName = "";
