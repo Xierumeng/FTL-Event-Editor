@@ -1,7 +1,7 @@
 # FTL Event Editor
 
 Allows the user to import, create, modify, delete, test, and export events for the video game FTL: Faster Than Light.
-This is a work-in-progress. See my plan for 2020 [here](https://github.com/Xierumeng/FTL-Event-Editor/blob/master/Plan%202020.md)
+This is a work-in-progress. See my plan for 2020 [here](https://github.com/Xierumeng/FTL-Event-Editor/blob/master/Plan%202020.md).
 
 ## Features
 
@@ -18,7 +18,7 @@ This is a work-in-progress. See my plan for 2020 [here](https://github.com/Xieru
 
 ## Usage Instructions
 
-While one *could* simply double-click the binary file (.exe), it's better to run the program from the command prompt, as crashes won't immediately close the window. This would help immensely with bug testing. Open a new issue and copy-paste the inputs and outputs into the text field.
+While one *could* simply double-click the binary file (.exe), it's better to run the program from the console, as crashes won't immediately close the window. This would help immensely with bug testing. Open a new issue and copy-paste the inputs and outputs into the text field.
 
 ## Versioning
 
