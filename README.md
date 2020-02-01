@@ -1,7 +1,7 @@
 # FTL Event Editor
 
-WIP: Allows the user to import, create, modify, delete, test, and export events for the video game FTL: Faster Than Light.
-This is a work-in-progress. I hope to have a working version by the end of the year. But given how lazy I am, this is probably not going to occur.
+Allows the user to import, create, modify, delete, test, and export events for the video game FTL: Faster Than Light.
+This is a work-in-progress. See my plan for 2020 [here](https://github.com/Xierumeng/FTL-Event-Editor/blob/master/Plan%202020.md)
 
 ## Features
 
