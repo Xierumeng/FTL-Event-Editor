@@ -22,31 +22,7 @@ While one *could* simply double-click the binary file (.exe), it's better to run
 
 ## Versioning
 
-### Planned
-
-Versioning is in the form of a.b.c where:
-* a is major version, most likely due to refactoring.
-* b is minor version, adding/changing functionality, mostly stable.
-* c is the old "will compile" version containing runtime errors.
-
-Note: Versioning numbers are more of a guide than a rule.
-
-#### Alpha Versions
-
-* 0.0.x Implementation of templated linked lists and nodes, basic commands (creating, finding, editing, deleting) for node and content manipulation
-* 0.1.x Addition of FTL data (events, text, rewards, ships, equipment etc.) and simulation environment
-* 0.1.3 Last version with linked list and nodes. 2019-09-13.
-* 0.1.4 Refactoring using maps instead of linked lists. Start of proper versioning control with Git.
-* 0.4 Quality assurance, UI changes, improved error feedback, forum post
-
-#### Beta Versions
-
-* 0.5 First finalized version of project for public consumption, bugfixes
-* 0.6 Modify UI to be more user-friendly based on public feedback
-
-#### Release Versions
-
-* 1.0 Second finalized version of project for public consumption, bugfixes
+Old system scrapped. Each new branch will follow the format FTLEE-#, where # is the issue at hand in the tracker.
 
 ## Conclusion
 
