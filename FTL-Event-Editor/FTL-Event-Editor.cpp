@@ -25,12 +25,13 @@
 // ------------
 */
 
-#include "Event.h"
-
 #include "tinyxml2.h"
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include "Event.h"
+
 //#include <QApplication>
 //#include <QPushButton>
 

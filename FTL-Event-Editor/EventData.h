@@ -1,9 +1,9 @@
 #pragma once
-#include "Common.h"
-//#include "Choice.h"
-#include "EventSupport.h"
+//#include <memory>
 
-#include <memory>
+#include "Common.h"
+#include "Choice.h"
+#include "EventSupport.h"
 
 class Choice;
 
@@ -14,14 +14,7 @@ public:
 
     EventData() = default;
     EventData(Text newText) : m_text(newText) {}
-    ~EventData()
-    {
-        for (auto it : m_choices)
-        {
-            delete it;
-        }
-        m_choices.clear();
-    }
+    ~EventData() = default;
 
     Text getText() { return m_text; }
     void setText(Text newText) { m_text = newText; }
@@ -42,7 +35,7 @@ private:
     bool m_unique = false;
     bool m_eventBreak = false; // <event/>
 
-    std::vector<Choice*> m_choices;
+    std::vector<Choice> m_choices;
 
 #if 0 // TODO Remove when Event class testing complete
     // Beacon appearance
