@@ -1,12 +1,11 @@
 #pragma once
+#include <string>
+#include <vector>
+#include <memory>
 
 #include "Common.h"
 #include "EventSupport.h"
 #include "EventData.h"
-
-#include <string>
-#include <vector>
-#include <memory>
 
 struct EventId
 {
