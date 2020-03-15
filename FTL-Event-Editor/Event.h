@@ -45,7 +45,7 @@ public:
 
 private:
 
-    EventId m_id; // Once set, should ABSOLUTELY NOT be changed
+    EventId m_id; // IMPORTANT: Once set, should ABSOLUTELY NOT be changed
     std::shared_ptr<EventData> m_p_eventData = std::make_shared<EventData>(EventData()); // name= event data
 };
 

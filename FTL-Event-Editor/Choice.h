@@ -42,4 +42,3 @@ private:
     MaxGroup m_maxGroup;
 #endif
 };
-

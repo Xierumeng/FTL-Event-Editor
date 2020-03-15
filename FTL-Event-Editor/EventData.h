@@ -35,7 +35,7 @@ private:
     bool m_unique = false;
     bool m_eventBreak = false; // <event/>
 
-    std::vector<Choice> m_choices;
+    std::vector<Choice> m_p_choices;
 
 #if 0 // TODO Remove when Event class testing complete
     // Beacon appearance
@@ -60,4 +60,3 @@ private:
     ItemModify m_item_modify; // Adds or removes consumables
 #endif
 };
-
