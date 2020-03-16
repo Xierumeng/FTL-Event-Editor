@@ -27,13 +27,18 @@ class Event
 public:
 
     Event() = default; // name=
-    Event(std::string eventIdName) : m_id(EventId(eventIdName, IdType::Name)) {} // name=
+
+    Event(std::string eventIdName) : m_id(EventId(eventIdName, IdType::Name)) // name=
+    {
+        resetEventData();
+    }
+
     Event(EventId newId) :
         m_id(newId)
     {
-        if (m_id.eventType == IdType::Load)
+        if (m_id.eventType == IdType::Name)
         {
-            m_p_eventData = nullptr;
+            resetEventData();
         }
     }
 
@@ -42,11 +47,16 @@ public:
     IdType getEventType() { return m_id.eventType; }
 
     std::shared_ptr<EventData> getEventData() { return m_p_eventData; }
+    void resetEventData()
+    {
+        m_p_eventData.reset();
+        m_p_eventData = std::make_shared<EventData>(EventData());
+    }
 
 private:
 
     EventId m_id; // IMPORTANT: Once set, should ABSOLUTELY NOT be changed
-    std::shared_ptr<EventData> m_p_eventData = std::make_shared<EventData>(EventData()); // name= event data
+    std::shared_ptr<EventData> m_p_eventData = nullptr; // name= event data
 };
 
 struct EventList
