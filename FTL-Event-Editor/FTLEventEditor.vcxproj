@@ -156,6 +156,7 @@
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FTL-Event-Editor.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
+    <ClCompile Include="TreeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Choice.h" />
@@ -164,6 +165,7 @@
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventSupport.h" />
     <ClInclude Include="tinyxml2.h" />
+    <ClInclude Include="TreeBuilder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

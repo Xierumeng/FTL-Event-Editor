@@ -31,7 +31,7 @@
 #include <vector>
 
 #include "Event.h"
-#include "TreeBuilder.cpp"
+#include "TreeBuilder.h"
 
 //#include <QApplication>
 //#include <QPushButton>
@@ -45,6 +45,12 @@ int main()
     std::vector<Event> events;
     std::vector<EventList> eventLists;
     std::vector<TextList> textLists;
+
+    tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
+    if (p_XMLFTLRoot == nullptr)
+    {
+        throw;
+    }
 
     tinyxml2::XMLElement* p_XMLEvent = nullptr;
     if (eventNameCheck(p_XMLEvent))

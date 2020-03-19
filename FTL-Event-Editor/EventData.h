@@ -27,6 +27,8 @@ public:
     void setEventBreak(bool newBreak) { m_eventBreak = newBreak; }
     void toggleEventBreak() { m_eventBreak = !m_eventBreak; }
 
+    void insertChoice(Choice newChoice) { m_choices.push_back(newChoice); }
+
     // Strings must include clear function
 
 private:
@@ -35,7 +37,7 @@ private:
     bool m_unique = false;
     bool m_eventBreak = false; // <event/>
 
-    std::vector<Choice> m_p_choices;
+    std::vector<Choice> m_choices;
 
 #if 0 // TODO Remove when Event class testing complete
     // Beacon appearance

@@ -10,15 +10,15 @@
 struct EventId
 {
     EventId() = default;
+    EventId(AttributeType newType) : eventType(newType) {}
     EventId(std::string name, IdType type)
     {
-        eventType = type;
-        eventName = name;
+        eventType.type = type;
+        eventType.data = name;
     }
     ~EventId() = default;
 
-    IdType eventType = IdType::Name;
-    std::string eventName = "";
+    AttributeType eventType;
 };
 
 // Event class
@@ -36,15 +36,15 @@ public:
     Event(EventId newId) :
         m_id(newId)
     {
-        if (m_id.eventType == IdType::Name)
+        if (m_id.eventType.type == IdType::Name)
         {
             resetEventData();
         }
     }
 
     EventId getEventId() { return m_id; }
-    std::string getEventIdString() { return m_id.eventName; }
-    IdType getEventType() { return m_id.eventType; }
+    std::string getEventIdString() { return m_id.eventType.data; }
+    IdType getEventType() { return m_id.eventType.type; }
 
     std::shared_ptr<EventData> getEventData() { return m_p_eventData; }
     void resetEventData()

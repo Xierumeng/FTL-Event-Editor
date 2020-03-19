@@ -5,7 +5,8 @@
 // Either name=, id=, load=
 enum class IdType
 {
-    Name = 0, // name=
+    Direct = 0, // Text located between opening and closing tags
+    Name, // name=
     Id, // id=
     Load // load=
 };
@@ -19,12 +20,20 @@ enum class Level
     HIGH
 };
 
+struct AttributeType
+{
+    IdType type = IdType::Name;
+    std::string data = "";
+};
+
 // Text wrapper
-// IdType::Name means direct text, id= is load from text_events.xml, load= is load from textList
+// IdType::Direct means direct text, id= is load from text_events.xml, load= is load from textList
 struct Text
 {
-    IdType textType = IdType::Name;
-    std::string textData = "";
+    Text() = default;
+    Text(AttributeType newType) : textType(newType) {}
+
+    AttributeType textType;
 
     std::string planet = "";
     std::string back = "";
