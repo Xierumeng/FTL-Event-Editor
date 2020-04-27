@@ -24,7 +24,7 @@ Event eventBuilder(tinyxml2::XMLElement* p_XMLEvent)
     EventId eventID;
     const char* eventName;
 
-    // TODO: Can we turn this into a 
+    // TODO: Can we turn this into a function?
     if (p_XMLEvent->QueryStringAttribute("name", &eventName) == tinyxml2::XML_SUCCESS)
     {
         eventID.eventType.type = IdType::Name;
@@ -54,10 +54,11 @@ void eventDataBuilder(std::shared_ptr<EventData> currentEventData, tinyxml2::XML
 {
     currentEventData->setText(textBuilder(p_XMLEvent->FirstChildElement("text")));
     
-    for (tinyxml2::XMLElement* p_itr = p_XMLEvent->FirstChildElement("choice"); p_itr != nullptr; p_itr->NextSiblingElement("choice"))
+    for (tinyxml2::XMLElement* p_itr = p_XMLEvent->FirstChildElement("choice"); p_itr != p_XMLEvent->LastChildElement("choice"); p_itr->NextSiblingElement("choice"))
     {
         currentEventData->insertChoice(choiceBuilder(p_itr));
     }
+    currentEventData->insertChoice(choiceBuilder(p_XMLEvent->LastChildElement("choice")));
 }
 
 // Input is a pointer to the XML node containing the choice
