@@ -54,6 +54,7 @@ void eventDataBuilder(std::shared_ptr<EventData> currentEventData, tinyxml2::XML
 {
     currentEventData->setText(textBuilder(p_XMLEvent->FirstChildElement("text")));
     
+    // TODO: Why does replacing this with a do-while loop crash it?
     for (tinyxml2::XMLElement* p_itr = p_XMLEvent->FirstChildElement("choice"); p_itr != p_XMLEvent->LastChildElement("choice"); p_itr->NextSiblingElement("choice"))
     {
         currentEventData->insertChoice(choiceBuilder(p_itr));

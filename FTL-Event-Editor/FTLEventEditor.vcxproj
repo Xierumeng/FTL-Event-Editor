@@ -164,6 +164,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventSupport.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="TreeBuilder.h" />
   </ItemGroup>
