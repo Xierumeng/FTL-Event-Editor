@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FTL>
+
+<event name="TUTORIAL_START">
+	<text id="event_TUTORIAL_START_text"/>
+	<choice>
+		<text id="continue"/>
+		<event>
+			<text id="event_TUTORIAL_START_c1_text"/>
+			<choice>
+				<text id="continue"/>
+				<event>
+					<text id="event_TUTORIAL_START_c1_c1_text"/>
+				</event>
+				<choice>
+					<text id="event_TUTORIAL_START_c1_c2_choice"/>
+					<event/>
+				</choice>
+			</choice>
+		</event>
+	</choice>
+</event>
+
+</FTL>

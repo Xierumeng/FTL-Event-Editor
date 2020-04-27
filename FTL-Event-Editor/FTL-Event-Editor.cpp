@@ -39,7 +39,7 @@
 int main()
 {
     tinyxml2::XMLDocument eventXML;
-    eventXML.LoadFile("D:/FTLDats/data/events.xml");
+    eventXML.LoadFile("D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml");
 
     // Top nodes of tree
     std::vector<Event> events;
@@ -52,7 +52,10 @@ int main()
         throw;
     }
 
+    p_XMLFTLRoot->Name();
     tinyxml2::XMLElement* p_XMLEvent = nullptr;
+    p_XMLEvent = p_XMLFTLRoot->FirstChildElement();
+    p_XMLEvent->Name();
     if (eventNameCheck(p_XMLEvent))
     {
         try
