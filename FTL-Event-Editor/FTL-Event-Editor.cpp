@@ -31,6 +31,7 @@
 #include <vector>
 
 #include "Event.h"
+#include "TreeBuilder.h"
 
 //#include <QApplication>
 //#include <QPushButton>
@@ -38,9 +39,39 @@
 int main()
 {
     tinyxml2::XMLDocument eventXML;
-    eventXML.LoadFile("D:/FTLDats/data/events.xml");
+    eventXML.LoadFile("D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml");
 
-    std::vector<Event> eventList;
+    // Top nodes of tree
+    std::vector<Event> events;
+    std::vector<EventList> eventLists;
+    std::vector<TextList> textLists;
+
+    tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
+    if (p_XMLFTLRoot == nullptr)
+    {
+        throw;
+    }
+
+    p_XMLFTLRoot->Name();
+    tinyxml2::XMLElement* p_XMLEvent = nullptr;
+    p_XMLEvent = p_XMLFTLRoot->FirstChildElement();
+    p_XMLEvent->Name();
+    if (eventNameCheck(p_XMLEvent))
+    {
+        try
+        {
+            std::cout << "Event insertion start." << std::endl;
+            events.push_back(eventBuilder(p_XMLEvent));
+        }
+        catch (...)
+        {
+            std::cout << "ERROR: eventBuilder exception." << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "ERROR: Failed to insert top-level nameless event." << std::endl;
+    }
 
     // Example code
 #if 0
