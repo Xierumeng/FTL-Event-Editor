@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "TreeBuilder.h"
 #include "Logging.h"
+#include "../UI/Navigation.h"
 
 //#include <QApplication>
 //#include <QPushButton>
@@ -66,52 +67,77 @@ int main()
             continue;
         }
 
+        // Import XML file
         if (userInput.find("import ") != std::string::npos)
         {
             // Get parameters substring
             std::string userValue = userInput.substr(7);
 
             // User output
-            if (eventXML.LoadFile(userValue.c_str()) == tinyxml2::XML_SUCCESS)
+            if (eventXML.LoadFile(userValue.c_str()) != tinyxml2::XML_SUCCESS)
+            {
+                Log::error("import failure");
+            }
+            else
             {
                 std::cout << "Successfully imported " << userValue << std::endl;
 
                 tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
+                tinyxml2::XMLElement* p_itr = nullptr;
                 if (p_XMLFTLRoot != nullptr)
                 {
-                    // Insertion loop
-                    tinyxml2::XMLElement* p_itr = p_XMLFTLRoot->FirstChildElement("event");
-                    while (p_itr != nullptr)
-                    {
-                        // Name check
-                        if (!eventNameCheck(p_itr)) {
-                            Log::warning("Top-level event has no name.");
-                        }
-
-                        Event tempEvent = eventBuilder(p_itr);
-
-                        // Duplicate key check TODO: Change to ::contains
-                        if (events.find(tempEvent.getEventIdString()) != events.end()) {
-                            Log::warning("Duplicate event name. The event will be overwritten.");
-                        }
-
-                        events.insert({ tempEvent.getEventIdString(), tempEvent });
-                        
-                        std::cout << "Inserted " << tempEvent.getEventIdString() << std::endl;
-
-                        p_itr = p_itr->NextSiblingElement("event");
-                    }
+                    p_itr = p_XMLFTLRoot->FirstChildElement("event");
+                }
+                else
+                {
+                    p_itr = eventXML.FirstChildElement("event");
                 }
 
+                // Insertion loop
+                while (p_itr != nullptr)
+                {
+                    // Name check
+                    if (!eventNameCheck(p_itr)) {
+                        Log::warning("Top-level event has no name.");
+                    }
+
+                    Event tempEvent = eventBuilder(p_itr);
+
+                    // Duplicate key check
+                    // TODO: Change to ::contains
+                    if (events.find(tempEvent.getEventIdString()) != events.end()) {
+                        Log::warning("Duplicate event name. The event will be overwritten.");
+                    }
+
+                    events.insert({ tempEvent.getEventIdString(), tempEvent });
+
+                    std::cout << "Inserted " << tempEvent.getEventIdString() << std::endl;
+
+                    p_itr = p_itr->NextSiblingElement("event");
+                }
+            }
+        }
+        // Load specified event
+        else if (userInput.find("load ") != std::string::npos)
+        {
+            // Get parameters substring
+            std::string userValue = userInput.substr(5);
+
+            auto eventIt = events.find(userValue);
+
+            if (events.find(userValue) == events.end())
+            {
+                Log::error("Event not found");
             }
             else
             {
-                Log::error("import failure");
+
             }
         }
 
     }
 
+#if 0
     eventXML.LoadFile("D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml");
 
     tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
@@ -143,7 +169,6 @@ int main()
     }
 
     // Example code
-#if 0
     ///*
     // <FTL>
     //   <event etc.>

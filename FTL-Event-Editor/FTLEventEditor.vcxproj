@@ -159,6 +159,7 @@
     <ClCompile Include="TreeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\UI\Navigation.h" />
     <ClInclude Include="Choice.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Event.h" />
