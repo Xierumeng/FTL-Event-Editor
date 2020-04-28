@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 #include "Common.h"
 #include "EventSupport.h"
@@ -51,6 +52,16 @@ public:
     {
         m_p_eventData.reset();
         m_p_eventData = std::make_shared<EventData>(EventData());
+    }
+
+    void printEvent()
+    {
+        printId(m_id.eventType.type);
+        std::cout << m_id.eventType.data << std::endl;
+        if (m_p_eventData != nullptr)
+        {
+            m_p_eventData->printEventData();
+        }
     }
 
 private:

@@ -59,6 +59,7 @@ int main()
     while (!std::cin.eof() && userInput != "exit") // When not at end of file
     {
         // User input
+        std::cout << "Accepting command:" << std::endl;
         getline(std::cin, userInput);
 
         // Skip if we're at the end
@@ -131,7 +132,7 @@ int main()
             }
             else
             {
-
+                eventIt->second.printEvent();
             }
         }
 
