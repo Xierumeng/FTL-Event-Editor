@@ -3,7 +3,11 @@
 
 void printId(const IdType& id)
 {
-    if (id == IdType::Name)
+    if (id == IdType::Direct)
+    {
+        std::cout << "(Direct) ";
+    }
+    else if (id == IdType::Name)
     {
         std::cout << "name=";
     }

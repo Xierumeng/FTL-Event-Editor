@@ -43,8 +43,9 @@ struct Text
 
     void printText()
     {
+        std::cout << "TEXT ";
         printId(textType.type);
-        std::cout << textType.data;
+        std::cout << textType.data << std::endl;
 
         std::cout << "planet=" << planet << std::endl;
         std::cout << "background=" << back << std::endl;

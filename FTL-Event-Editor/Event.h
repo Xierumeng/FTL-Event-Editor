@@ -56,11 +56,18 @@ public:
 
     void printEvent()
     {
+        std::cout << std::endl;
+        std::cout << "EVENT ";
         printId(m_id.eventType.type);
         std::cout << m_id.eventType.data << std::endl;
+        std::cout << std::endl;
         if (m_p_eventData != nullptr)
         {
             m_p_eventData->printEventData();
+        }
+        else
+        {
+            std::cout << "End of event." << std::endl;
         }
     }
 

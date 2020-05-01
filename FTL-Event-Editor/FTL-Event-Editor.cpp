@@ -59,7 +59,8 @@ int main()
     while (!std::cin.eof() && userInput != "exit") // When not at end of file
     {
         // User input
-        std::cout << "Accepting command:" << std::endl;
+        std::cout << std::endl;
+        std::cout << "Accepting command: ";
         getline(std::cin, userInput);
 
         // Skip if we're at the end
@@ -198,6 +199,7 @@ int main()
     std::cout << "Hello? " << text0 << " " << minBoarders << " " << eventName << std::endl;
 #endif
 
+    std::cout << std::endl;
     system("PAUSE");
     return 0;
 }
