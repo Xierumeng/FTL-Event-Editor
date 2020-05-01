@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FTL>
 
+<event name="TEST0">
+	<text>TEST0</text>
+	<choice>
+		<text>TEST0-C1</text>
+		<event>
+			<text>TEST0-C1E</text>
+		</event>
+	</choice>
+	<choice>
+		<text>TEST0-C2</text>
+		<event>
+			<text>TEST0-C2E</text>
+		</event>
+	</choice>
+</event>
+
 <event name="TUTORIAL_START">
 	<text id="event_TUTORIAL_START_text"/>
 	<choice>

@@ -153,17 +153,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Choice.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="EventData.cpp" />
     <ClCompile Include="FTL-Event-Editor.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="TreeBuilder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\UI\Navigation.h" />
     <ClInclude Include="Choice.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventData.h" />
     <ClInclude Include="EventSupport.h" />
+    <ClInclude Include="Logging.h" />
     <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="TreeBuilder.h" />
   </ItemGroup>

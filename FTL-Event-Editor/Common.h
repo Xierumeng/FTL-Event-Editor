@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
 
 // Either name=, id=, load=
 enum class IdType
@@ -10,6 +11,8 @@ enum class IdType
     Id, // id=
     Load // load=
 };
+
+void printId(const IdType& id);
 
 // Random, low, medium, high
 enum class Level
@@ -37,6 +40,16 @@ struct Text
 
     std::string planet = "";
     std::string back = "";
+
+    void printText()
+    {
+        std::cout << "TEXT ";
+        printId(textType.type);
+        std::cout << textType.data << std::endl;
+
+        std::cout << "planet=" << planet << std::endl;
+        std::cout << "background=" << back << std::endl;
+    }
 };
 
 struct TextList

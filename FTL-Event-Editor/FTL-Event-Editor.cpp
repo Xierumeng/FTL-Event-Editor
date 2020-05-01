@@ -25,26 +25,122 @@
 // ------------
 */
 
+// Change std::map::find to std::map::contains once C++20 is out.
+
 #include "tinyxml2.h"
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "Event.h"
 #include "TreeBuilder.h"
+#include "Logging.h"
+#include "../UI/Navigation.h"
 
 //#include <QApplication>
 //#include <QPushButton>
 
 int main()
 {
+    // State variables
+    // XML Document
     tinyxml2::XMLDocument eventXML;
-    eventXML.LoadFile("D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml");
-
+    
     // Top nodes of tree
-    std::vector<Event> events;
-    std::vector<EventList> eventLists;
-    std::vector<TextList> textLists;
+    // Using map to avoid duplicate named objects
+    std::map<std::string, Event> events;
+    std::map<std::string, EventList> eventLists;
+    std::map<std::string, TextList> textLists;
+
+    std::string userInput = "";
+
+    // UI loop
+    while (!std::cin.eof() && userInput != "exit") // When not at end of file
+    {
+        // User input
+        std::cout << std::endl;
+        std::cout << "Accepting command: ";
+        getline(std::cin, userInput);
+
+        // Skip if we're at the end
+        if (std::cin.eof())
+        {
+            continue;
+        }
+
+        // Import XML file
+        if (userInput.find("import ") != std::string::npos)
+        {
+            // Get parameters substring
+            std::string userValue = userInput.substr(7);
+
+            // User output
+            if (eventXML.LoadFile(userValue.c_str()) != tinyxml2::XML_SUCCESS)
+            {
+                Log::error("import failure");
+            }
+            else
+            {
+                std::cout << "Successfully imported " << userValue << std::endl;
+
+                tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
+                tinyxml2::XMLElement* p_itr = nullptr;
+                if (p_XMLFTLRoot != nullptr)
+                {
+                    p_itr = p_XMLFTLRoot->FirstChildElement("event");
+                }
+                else
+                {
+                    p_itr = eventXML.FirstChildElement("event");
+                }
+
+                // Insertion loop
+                while (p_itr != nullptr)
+                {
+                    // Name check
+                    if (!eventNameCheck(p_itr)) {
+                        Log::warning("Top-level event has no name.");
+                    }
+
+                    Event tempEvent = eventBuilder(p_itr);
+
+                    // Duplicate key check
+                    // TODO: Change to ::contains
+                    if (events.find(tempEvent.getEventIdString()) != events.end()) {
+                        Log::warning("Duplicate event name. The event will be overwritten.");
+                    }
+
+                    events.insert({ tempEvent.getEventIdString(), tempEvent });
+
+                    std::cout << "Inserted " << tempEvent.getEventIdString() << std::endl;
+
+                    p_itr = p_itr->NextSiblingElement("event");
+                }
+            }
+        }
+        // Load specified event
+        else if (userInput.find("load ") != std::string::npos)
+        {
+            // Get parameters substring
+            std::string userValue = userInput.substr(5);
+
+            auto eventIt = events.find(userValue);
+
+            if (events.find(userValue) == events.end())
+            {
+                Log::error("Event not found");
+            }
+            else
+            {
+                eventIt->second.printEvent();
+            }
+        }
+
+    }
+
+#if 0
+    eventXML.LoadFile("D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml");
 
     tinyxml2::XMLElement* p_XMLFTLRoot = eventXML.FirstChildElement("FTL");
     if (p_XMLFTLRoot == nullptr)
@@ -61,7 +157,8 @@ int main()
         try
         {
             std::cout << "Event insertion start." << std::endl;
-            events.push_back(eventBuilder(p_XMLEvent));
+            Event tempEvent = eventBuilder(p_XMLEvent);
+            events.insert({ tempEvent.getEventIdString(), tempEvent });
         }
         catch (...)
         {
@@ -74,7 +171,6 @@ int main()
     }
 
     // Example code
-#if 0
     ///*
     // <FTL>
     //   <event etc.>
@@ -103,6 +199,7 @@ int main()
     std::cout << "Hello? " << text0 << " " << minBoarders << " " << eventName << std::endl;
 #endif
 
+    std::cout << std::endl;
     system("PAUSE");
     return 0;
 }

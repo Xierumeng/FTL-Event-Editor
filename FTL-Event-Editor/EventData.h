@@ -28,6 +28,8 @@ public:
     void toggleEventBreak() { m_eventBreak = !m_eventBreak; }
 
     void insertChoice(Choice newChoice) { m_choices.push_back(newChoice); }
+    
+    void printEventData();
 
     // Strings must include clear function
 

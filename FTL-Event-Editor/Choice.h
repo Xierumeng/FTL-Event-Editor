@@ -25,13 +25,16 @@ public:
     Text getText() { return m_text; }
     void setText(Text newText) { m_text = newText; }
 
-    std::shared_ptr<Event> getEvent() { return p_m_event; }
+    std::shared_ptr<Event> getEvent() { return m_p_event; }
     void setEvent(Event* newEvent);
+
+    void printChoice();
+    void printChoiceEvent();
 
 private:
 
     Text m_text;
-    std::shared_ptr<Event> p_m_event;
+    std::shared_ptr<Event> m_p_event;
 
 #if 0 // TODO Remove when Choice class testing complete
     bool m_blue = false;
