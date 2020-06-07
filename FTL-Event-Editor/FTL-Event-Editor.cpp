@@ -70,6 +70,8 @@ int main()
         }
 
         // Import XML file
+        // D:/Repositories/FTLDats/data/events.xml
+        // D:/Repositories/FTL-Event-Editor/Tests/barebone_event.xml
         if (userInput.find("import ") != std::string::npos)
         {
             // Get parameters substring
@@ -106,7 +108,7 @@ int main()
                     Event tempEvent = eventBuilder(p_itr);
 
                     // Duplicate key check
-                    // TODO: Change to ::contains
+                    // TODO: Change to ::contains for C++20
                     if (events.find(tempEvent.getEventIdString()) != events.end()) {
                         Log::warning("Duplicate event name. The event will be overwritten.");
                     }

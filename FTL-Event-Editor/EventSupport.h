@@ -11,6 +11,26 @@ enum class Environment
     PDSAll
 };
 
+void printEnvironment(Environment hazard)
+{
+    if (hazard == Environment::asteroid)
+    {
+        std::cout << "asteroid";
+    }
+    else if (hazard == Environment::sun)
+    {
+        std::cout << "sun";
+    }
+    else if (hazard == Environment::pulsar)
+    {
+        std::cout << "pulsar";
+    }
+    else if (hazard == Environment::PDSEnemy)
+    {
+        std::cout << "PDS target=enemy";
+    }
+}
+
 enum class Fleet
 {
     None = 0,

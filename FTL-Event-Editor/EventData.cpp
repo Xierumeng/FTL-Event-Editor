@@ -6,6 +6,7 @@ void EventData::printEventData()
 {
     m_text.printText();
 
+    // Printing out data
     std::cout << "unique=";
     if (m_unique)
     {
@@ -16,6 +17,8 @@ void EventData::printEventData()
         std::cout << "false";
     }
     std::cout << std::endl;
+
+    
 
     std::cout << std::endl;
     std::cout << "CHOICES" << std::endl;
