@@ -8,28 +8,10 @@ enum class Environment
     pulsar,
     PDSPlayer, // PDS target
     PDSEnemy,
-    PDSAll
+    PDSBoth
 };
 
-void printEnvironment(Environment hazard)
-{
-    if (hazard == Environment::asteroid)
-    {
-        std::cout << "asteroid";
-    }
-    else if (hazard == Environment::sun)
-    {
-        std::cout << "sun";
-    }
-    else if (hazard == Environment::pulsar)
-    {
-        std::cout << "pulsar";
-    }
-    else if (hazard == Environment::PDSEnemy)
-    {
-        std::cout << "PDS target=enemy";
-    }
-}
+void printEnvironment(Environment hazard);
 
 enum class Fleet
 {

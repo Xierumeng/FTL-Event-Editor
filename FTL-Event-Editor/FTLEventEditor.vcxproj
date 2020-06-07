@@ -155,6 +155,7 @@
     <ClCompile Include="Choice.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="EventData.cpp" />
+    <ClCompile Include="EventSupport.cpp" />
     <ClCompile Include="FTL-Event-Editor.cpp" />
     <ClCompile Include="tinyxml2.cpp" />
     <ClCompile Include="TreeBuilder.cpp" />
